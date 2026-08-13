@@ -11,3 +11,96 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  ADMIN
+  DISPATCHER
+  TECHNICIAN
+}
+
+enum TechnicianStatus {
+  AVAILABLE
+  BUSY
+  UNAVAILABLE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum WorkOrderStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Customer {
+  id  String  @id @default(cuid())
+  name  String
+  email String  @unique
+  phone String
+  address String
+
+  workOrders WorkOrder[]
+
+  createdAt DateTime @default(now())
+  updated DateTime @updatedAt
+
+}
+
+model Technician {
+  id String @id @default(cuid())
+  userId String @unique
+  name String
+  email String @unique
+  phone String?
+  skills String
+  status TechnicianStatus @default(AVAILABLE)
+
+  workOrders WorkOrder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkOrder {
+  id String @id @default(cuid())
+  title String
+  description String
+
+  coustomerId String
+  technicianId String?
+
+  priority Priority @default(MEDIUM)
+  status WorkOrderStatus @default(OPEN)
+
+  scheduledDate DateTime
+  completionNotes String?
+
+  customer Customer @relation(fields: [coustomerId], references: [id])
+  technician Technician? @relation(fields: [technicianId], references: [id])
+
+  activities Activity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+
+  workOrderId String
+  userId      String
+
+  action      String
+  note        String?
+
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
