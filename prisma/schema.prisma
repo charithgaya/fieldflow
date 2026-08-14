@@ -40,27 +40,28 @@ enum WorkOrderStatus {
 }
 
 model Customer {
-  id  String  @id @default(cuid())
-  name  String
-  email String  @unique
-  phone String
+  id      String @id @default(cuid())
+  name    String
+  email   String @unique
+  phone   String
   address String
 
   workOrders WorkOrder[]
 
   createdAt DateTime @default(now())
-  updated DateTime @updatedAt
-
+  updated   DateTime @updatedAt
 }
 
 model Technician {
-  id String @id @default(cuid())
-  userId String @unique
-  name String
-  email String @unique
-  phone String?
+  id     String           @id @default(cuid())
+  name   String
+  email  String           @unique
+  phone  String?
   skills String
   status TechnicianStatus @default(AVAILABLE)
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   workOrders WorkOrder[]
 
@@ -69,20 +70,20 @@ model Technician {
 }
 
 model WorkOrder {
-  id String @id @default(cuid())
-  title String
+  id          String @id @default(cuid())
+  title       String
   description String
 
-  coustomerId String
+  customerId   String
   technicianId String?
 
-  priority Priority @default(MEDIUM)
-  status WorkOrderStatus @default(OPEN)
+  priority Priority        @default(MEDIUM)
+  status   WorkOrderStatus @default(OPEN)
 
-  scheduledDate DateTime
+  scheduledDate   DateTime
   completionNotes String?
 
-  customer Customer @relation(fields: [coustomerId], references: [id])
+  customer   Customer    @relation(fields: [customerId], references: [id])
   technician Technician? @relation(fields: [technicianId], references: [id])
 
   activities Activity[]
@@ -92,15 +93,81 @@ model WorkOrder {
 }
 
 model Activity {
-  id          String   @id @default(cuid())
-
+  id          String @id @default(cuid())
   workOrderId String
   userId      String
 
-  action      String
-  note        String?
+  action String
+  note   String?
 
-  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id])
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          Role     @default(TECHNICIAN)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+
+  technician Technician?
+  activities Activity[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
 }
