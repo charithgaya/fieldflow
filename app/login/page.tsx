@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/dist/client/components/navigation";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
@@ -33,19 +33,22 @@ export default function LoginPage() {
     }
 
     return(
-        <main>
-            <div>
-                <h1>
+        <main className="flex items-center justify-center min-h-screen p-6">
+            <div className="w-full max-w-md rounded-lg border p-6 shadow-md">
+                <h1 className="mb-4 text-2xl font-bold">
                     FieldFlow
                 </h1>
 
-                <p>
+                <p className="mb-6 text-gray-600 text-sm">
                     Sign in to your account
                 </p>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="email">
+                        <label 
+                            className="mb-1 block text-sm font-medium"
+                            htmlFor="email"
+                        >
                             Email
                         </label>
                         <input
@@ -53,11 +56,15 @@ export default function LoginPage() {
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className="w-full rounded-md border px-3 py-2"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="password">
+                        <label 
+                            className="mb-1 block text-sm font-medium"
+                            htmlFor="password"
+                        >
                             Password
                         </label>
                         <input
@@ -65,11 +72,12 @@ export default function LoginPage() {
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            className="w-full rounded-md border px-3 py-2"
                         />
                     </div>
 
                     {error && (
-                        <p>
+                        <p className="text-sm text-red-500">
                             {error}
                         </p>
                     )}
@@ -77,6 +85,7 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
+                        className="w-full rounded-md bg-green-500 py-2 px-4 text-white hover:bg-green-600 disabled:opacity-50"
                     >
                         {loading ? "Signing in..." : "Sign In"}
                     </button>
