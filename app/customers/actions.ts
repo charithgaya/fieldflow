@@ -76,7 +76,7 @@ export async function createCustomer(
             };
         };
 
-        console.error("Failed o create customer: ", error);
+        console.error("Failed to create customer: ", error);
 
         return {
             error: "Something went wrong while creating the customer.",
@@ -84,4 +84,91 @@ export async function createCustomer(
     }
 
     redirect("/customers");
+}
+
+export async function updateCustomer(
+    _previousState: CustomerFormState,
+    formData: FormData
+): Promise<CustomerFormState> {
+    const user = await requireUser();
+
+    //Server-side authorization
+    if(user.role !== "ADMIN" && user.role !== "DISPATCHER") {
+        return {
+            error: "You are not authorized to update a customer",
+        }
+    }
+
+    const id = formData.get("id");
+
+    if(typeof id !== "string" || !id) {
+        return {
+            error: "Customer ID is missing",
+        };
+    }
+
+    const result = customerSchema.safeParse({
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string,
+        address: formData.get("address") as string
+    });
+
+    if (!result.success) {
+        return {
+            error: "Please correct the errors below",
+            fieldErrors: result.error.flatten().fieldErrors,
+        };
+    }
+
+    const { name, email, phone, address } = result.data;
+
+    try {
+        await prisma.customer.update({
+            where: {
+                id,
+            },
+            data: {
+                name,
+                email,
+                phone,
+                address,
+            },
+        });
+    } catch (error: unknown) {
+        
+        if (
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            error.code === "P2002"
+        ) {
+            return {
+                error: "A customer with this email already exists.",
+                fieldErrors: {
+                    email: ["This email is already in use."],
+                },
+            };
+        };
+
+        if (
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            error.code === "P2025"
+        ) {
+            return {
+                error: "Customer not found.",
+            };
+        };
+        
+
+        console.error("Failed to update customer: ", error);
+
+        return {
+            error: "Something went wrong while updating the customer.",
+        };
+    }
+
+    redirect(`/customers/${id}`);
 }
