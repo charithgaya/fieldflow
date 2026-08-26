@@ -109,9 +109,13 @@ export async function createWorkOrder(
     redirect("/work-orders");
 }
 
+export type AssignTechnicianFormState = {
+    error?: string;
+};
 export async function assignTechnician(
+    _previousState: AssignTechnicianFormState,
     formData: FormData
-): Promise<{ error?: string }> {
+): Promise<AssignTechnicianFormState> {
 
     const user = await requireUser();
 
@@ -147,7 +151,7 @@ export async function assignTechnician(
             };
         }
 
-        const technician = await prisma.user.findUnique({
+        const technician = await prisma.technician.findUnique({
             where: { id: technicianId },
         });
 
