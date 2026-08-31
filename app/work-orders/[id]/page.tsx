@@ -3,15 +3,12 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import AssignTechnicianForm from "../assign-technician-form";
 import { requireUser } from "@/lib/auth-utils";
+import StartWorkButton from "../start-work-button";
 
 export default async function WorkOrderDetailsPage(
     { params }: { params: Promise<{ id: string }> }
 ){
     const user = await requireUser();
-
-    if (user.role !== "ADMIN" && user.role !== "DISPATCHER") {
-        redirect("/dashboard");
-    }
 
     const { id } = await params;
 
@@ -37,10 +34,24 @@ export default async function WorkOrderDetailsPage(
         notFound();
     }
 
-    const technicians = await prisma.technician.findMany({
-        orderBy: { name: "asc" },
-    });
+    // Technicians can only access their assigned work orders
+    if(user.role === "TECHNICIAN") {
+        const technician = await prisma.technician.findUnique({
+            where: { userId: user.id },
+        });
+        
+        if (!technician || workOrder.technicianId !== technician.id) {
+            redirect("/my-jobs");
+        }
+    }
 
+    // Only Admin & Dispatcher can access the assignment data/form
+    const technicians = user.role === "ADMIN" || user.role === "DISPATCHER"
+        ? await prisma.technician.findMany({
+            orderBy: { name: "asc" },
+        })
+        : [];
+    
     return (
         <main className="p-6">
             <div className="mx-auto max-w-4xl">
@@ -56,10 +67,17 @@ export default async function WorkOrderDetailsPage(
                     </div>
 
                     <Link
-                        href="/work-orders"
+                        href={
+                            user.role === "TECHNICIAN" 
+                                ? "/my-jobs" 
+                                : "/work-orders"
+                        }
                         className="rounded-md border px-4 py-2 text-sm"
                     >
-                            Back to Work Orders
+                            {user.role === "TECHNICIAN" 
+                                ? "Back to My Jobs" 
+                                : "Back to Work Orders"
+                            }
                     </Link>
                 </div>
 
@@ -126,23 +144,45 @@ export default async function WorkOrderDetailsPage(
                                 </p>
 
                                 <p className="text-gray-600">
-                                    {workOrder.technician ? workOrder.technician.name : "Not assigned"}
+                                    {workOrder.technician 
+                                        ? workOrder.technician.name 
+                                        : "Not assigned"}
                                 </p>
                             </div>
                         </div>
                     </section>
 
-                    <section className="rounded-lg border p-5">
-                        <h2 className="font-semibold">
-                            Assign Technician
-                        </h2>
+                    {user.role === "ADMIN" || user.role === "DISPATCHER" ? (
+                        <section className="rounded-lg border p-5">
+                            <h2 className="font-semibold">
+                                Assign Technician
+                            </h2>
 
-                        <AssignTechnicianForm
-                            workOrderId={workOrder.id}
-                            currentTechnicianId={workOrder.technicianId}
-                            technicians={technicians}
-                        />
-                    </section>
+                            <AssignTechnicianForm
+                                workOrderId={workOrder.id}
+                                currentTechnicianId={workOrder.technicianId}
+                                technicians={technicians}
+                            />
+                        </section>
+                    ) : (
+                        <section className="rounded-lg border p-5">
+                            <h2 className="font-semibold">
+                                Technician
+                            </h2>
+
+                            <p className="mt-4 text-sm text-gray-600">
+                                {workOrder.technician 
+                                    ? workOrder.technician.name 
+                                    : "Not assigned"}
+                            </p>
+
+                            {workOrder.status === "ASSIGNED" && (
+                                <StartWorkButton
+                                    workOrderId={workOrder.id}
+                                />
+                            )}
+                        </section>
+                    )} 
                 </div>
 
                 <section className="mt-6 rounded-lg border p-5">

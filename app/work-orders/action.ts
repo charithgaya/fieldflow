@@ -161,33 +161,142 @@ export async function assignTechnician(
             };
         }
 
-        if (technician.status === "UNAVAILABLE") {
+        if (technician.status !== "AVAILABLE") {
             return {
-                error: "Technician is unavailable.",
+                error: "Technician is not available for assignment.",
             };
         }
 
-        const updatedWorkOrder = await prisma.workOrder.update({
-            where: { id: workOrderId },
-            data: {
-                technicianId,
-                status: "ASSIGNED",
-            },
-        });
+        const updatedWorkOrder = await prisma.$transaction(async (tx) => {
+            const updatedWorkOrder = await tx.workOrder.update({
+                where: { id: workOrderId },
+                data: {
+                    technicianId,
+                    status: "ASSIGNED",
+                },
+            });
 
-        await prisma.activity.create({
-            data: {
-                workOrderId: updatedWorkOrder.id,
-                userId: user.id,
-                action: "ASSIGNED",
-                note: "Work order assigned to technician",
-            },
+            console.log("BEFORE TECHNICIAN UPDATE:", technicianId);
+
+        const updatedTechnician = await tx.technician.update({
+                where: { id: technicianId },
+                data: {
+                    status: "BUSY",
+                },
+            });
+
+            console.log(
+        "AFTER TECHNICIAN UPDATE:",
+        updatedTechnician.id,
+        updatedTechnician.status
+    );
+
+            await tx.activity.create({
+                data: {
+                    workOrderId: updatedWorkOrder.id,
+                    userId: user.id,
+                    action: "ASSIGNED",
+                    note: "Work order assigned to technician",
+                },
+            });
+
+            return updatedWorkOrder;
         });
+        
     } catch (error: unknown) {
         console.error("Error assigning technician:", error);
 
         return {
             error: "An error occurred while assigning the technician. Please try again.",
+        };
+    }
+
+    redirect(`/work-orders/${workOrderId}`);    
+}
+
+export type StartWorkFormState = {
+    error?: string;
+}
+
+export async function startWork(
+    _previousState: StartWorkFormState,
+    formData: FormData
+): Promise<StartWorkFormState> {
+
+    const user = await requireUser();
+
+    // Only technicians can start assigned work
+    if(user.role !== "TECHNICIAN"){
+        return {
+            error: "Only technicians can start work.",
+        };
+    }
+
+    const workOrderId = formData.get("workOrderId");
+
+    if (typeof workOrderId !== "string" || !workOrderId) {
+        return {
+            error: "Invalid work order ID.",
+        };
+    }
+
+    try {
+        // Find the technician profile connected to the currently signed in user
+        const technician = await prisma.technician.findUnique({
+            where: { userId: user.id },
+        });
+
+        if (!technician) {
+            return {
+                error: "Technician Profile not found.",
+            };
+        }
+
+        const workOrder = await prisma.workOrder.findUnique({
+            where: { id: workOrderId },
+        });
+
+        if (!workOrder) {
+            return {
+                error: "Work order not found.",
+            };
+        }
+
+        // Server-side ownership protection
+        if(workOrder.technicianId !== technician.id){
+            return {
+                error: "You do not have permission to start this work order.",
+            };
+        }
+    
+        // Only an assigned job can be started
+        if(workOrder.status !== "ASSIGNED"){
+            return {
+                error: "Only an assigned work order can be started.",
+            };
+        }
+
+        await prisma.$transaction([
+            prisma.workOrder.update({
+                where: { id: workOrderId },
+                data: {
+                    status: "IN_PROGRESS",
+                },
+            }),
+            prisma.activity.create({
+                data: {
+                    workOrderId,
+                    userId: user.id,
+                    action: "STATUS_CHANGED",
+                    note: "Work order status changed from ASSIGNED to IN_PROGRESS",
+                },
+            }),
+        ]);
+    } catch (error: unknown) {
+        console.error("Error starting work:", error);
+
+        return {
+            error: "An error occurred while starting work. Please try again.",
         };
     }
 
