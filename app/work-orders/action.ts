@@ -302,3 +302,204 @@ export async function startWork(
 
     redirect(`/work-orders/${workOrderId}`);    
 }
+
+export type AddProgressNoteFormState = {
+    error?: string;
+    success?: string;
+};
+
+export async function addProgressNote(
+    _previousState: AddProgressNoteFormState,
+    formData: FormData
+): Promise<AddProgressNoteFormState> {
+    const user = await requireUser();
+
+    // Only technicians can add progress notes
+    if(user.role !== "TECHNICIAN"){
+        return {
+            error: "Only technicians can add progress notes.",
+        };
+    }
+
+    const workOrderId = formData.get("workOrderId");
+    const note = formData.get("note");
+
+    if (typeof workOrderId !== "string" || !workOrderId) {
+        return {
+            error: "Invalid work order ID.",
+        };
+    }
+
+    if (typeof note !== "string" || !note.trim()) {
+        return {
+            error: "Progress note is required.",
+        };
+    }
+
+    const technician = await prisma.technician.findUnique({
+        where: { userId: user.id },
+    });
+
+    if (!technician) {
+        return {
+            error: "Technician profile not found.",
+        };
+    }
+
+    const workOrder = await prisma.workOrder.findUnique({
+        where: { id: workOrderId },
+    });
+
+    if (!workOrder) {
+        return {
+            error: "Work order not found.",
+        };
+    }
+
+    // Server-side ownership protection
+    if(workOrder.technicianId !== technician.id){
+        return {
+            error: "You do not have permission to add a progress note to this work order.",
+        };
+    }
+
+    // Only an in-progress job can have progress notes added
+    if(workOrder.status !== "IN_PROGRESS"){
+        return {
+            error: "Only an in-progress work order can have progress notes added.",
+        };
+    }
+
+    try {
+        await prisma.activity.create({
+            data: {
+                workOrderId,
+                userId: user.id,
+                action: "PROGRESS_NOTE",
+                note: note.trim(),
+            },
+        });
+    } catch (error: unknown) {
+        console.error("Error adding progress note:", error);
+
+        return {
+            error: "An error occurred while adding progress note. Please try again.",
+        };
+    }
+
+    return {
+        success: "Progress note added successfully.",
+    };
+}
+
+export type CompleteWorkOrderFormState = {
+    error?: string;
+    success?: string;
+};
+
+export async function completeWorkOrder(
+    _previousState: CompleteWorkOrderFormState,
+    formData: FormData
+): Promise<CompleteWorkOrderFormState> {
+    const user = await requireUser();
+    
+    // Only technicians can complete work orders
+    if(user.role !== "TECHNICIAN"){
+        return {
+            error: "Only technicians can complete work orders.",
+        };
+    }
+
+    const workOrderId = formData.get("workOrderId");
+    const completionNotes = formData.get("completionNotes");
+
+    if (typeof workOrderId !== "string" || !workOrderId) {
+        return {
+            error: "Invalid work order ID.",
+        };
+    }
+
+    if (typeof completionNotes !== "string" || !completionNotes.trim()) {
+        return {
+            error: "Completion notes are required.",
+        };
+    }
+
+    const technician = await prisma.technician.findUnique({
+        where: { userId: user.id },
+    });
+
+    if (!technician) {
+        return {
+            error: "Technician profile not found.",
+        };
+    }
+
+    const workOrder = await prisma.workOrder.findUnique({
+        where: {
+            id: workOrderId,
+        },
+    });
+
+    if (!workOrder){
+        return {
+            error: "Work order not found.",
+        };
+    }
+
+    // Server-side ownership protection
+    if(workOrder.technicianId !== technician.id){
+        return {
+            error: "You do not have permission to complete this work order.",
+        };
+    }
+
+    // Only an in-progress job can be completed
+    if(workOrder.status !== "IN_PROGRESS"){
+        return {
+            error: "Only an in-progress work order can be completed.",
+        };
+    }
+
+    try {
+        await prisma.$transaction([
+            prisma.workOrder.update({
+                where: { 
+                    id: workOrderId 
+                },
+                data: { 
+                    status: "COMPLETED",
+                    completionNotes: completionNotes.trim(),
+                },
+            }),
+
+            prisma.activity.create({
+                data: {
+                    workOrderId,
+                    userId: user.id,
+                    action: "COMPLETED",
+                    note: completionNotes.trim(),
+                },
+            }),
+
+            prisma.technician.update({
+                where: { 
+                    id: technician.id,
+                },
+                data: { 
+                    status: "AVAILABLE",
+                },
+            }),
+        ]);
+    } catch (error: unknown) {
+        console.error("Error completing work order:", error);
+
+        return {
+            error: "An error occurred while completing the work order. Please try again.",
+        };
+    }
+
+    return {
+        success: "Work order completed successfully.",
+    };
+}

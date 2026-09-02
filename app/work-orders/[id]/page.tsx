@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import AssignTechnicianForm from "../assign-technician-form";
 import { requireUser } from "@/lib/auth-utils";
 import StartWorkButton from "../start-work-button";
+import ProgressNoteForm from "../progress-note-form";
+import CompleteJobForm from "../complete-job-form";
 
 export default async function WorkOrderDetailsPage(
     { params }: { params: Promise<{ id: string }> }
@@ -178,6 +180,18 @@ export default async function WorkOrderDetailsPage(
 
                             {workOrder.status === "ASSIGNED" && (
                                 <StartWorkButton
+                                    workOrderId={workOrder.id}
+                                />
+                            )}
+
+                            {workOrder.status === "IN_PROGRESS" && (
+                                <ProgressNoteForm 
+                                    workOrderId={workOrder.id}
+                                />
+                            )}
+
+                            {workOrder.status === "IN_PROGRESS" && (
+                                <CompleteJobForm 
                                     workOrderId={workOrder.id}
                                 />
                             )}
