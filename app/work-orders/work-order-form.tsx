@@ -25,7 +25,7 @@ export default function WorkOrderForm({
     );
 
     return (
-        <form action={formAction} className="space-y-6">
+        <form action={formAction} className="space-y-6 border border-gray-700 p-6 rounded-md">
             {state.error && (
                 <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
                     {state.error}
@@ -44,7 +44,7 @@ export default function WorkOrderForm({
                     id="title"
                     name="title"
                     type="text"
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="mt-1 w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="e.g. AC repair"
                     required
                 />
@@ -68,7 +68,7 @@ export default function WorkOrderForm({
                     id="description"
                     name="description"
                     rows={4}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="mt-1 w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="Describe the requested work"
                     required
                 />
@@ -92,10 +92,10 @@ export default function WorkOrderForm({
                     id="customerId"
                     name="customerId"
                     defaultValue=""
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="mt-1 w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     required
                 >
-                    <option value="" disabled>
+                    <option value="" className="bg-gray-900" disabled>
                         Select a customer
                     </option>
 
@@ -103,6 +103,7 @@ export default function WorkOrderForm({
                         <option
                             key={customer.id}
                             value={customer.id}
+                            className="bg-gray-900"
                         >
                             {customer.name}
                         </option>
@@ -128,12 +129,12 @@ export default function WorkOrderForm({
                     id="priority"
                     name="priority"
                     defaultValue="MEDIUM"
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="mt-1 w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="URGENT">Urgent</option>
+                    <option value="LOW" className="bg-gray-900">Low</option>
+                    <option value="MEDIUM" className="bg-gray-900">Medium</option>
+                    <option value="HIGH" className="bg-gray-900">High</option>
+                    <option value="URGENT" className="bg-gray-900">Urgent</option>
                 </select>
 
                 {state.fieldErrors?.priority && (
@@ -155,7 +156,7 @@ export default function WorkOrderForm({
                     id="scheduledDate"
                     name="scheduledDate"
                     type="datetime-local"
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="mt-1 w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     required
                 />
 
@@ -179,7 +180,7 @@ export default function WorkOrderForm({
 
                 <Link
                     href="/work-orders"
-                    className="rounded-md border px-4 py-2 text-sm"
+                    className="rounded-md text-gray-400 border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white"
                 >
                     Cancel
                 </Link>

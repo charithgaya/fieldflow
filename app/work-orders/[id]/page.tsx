@@ -7,6 +7,34 @@ import StartWorkButton from "../start-work-button";
 import ProgressNoteForm from "../progress-note-form";
 import CompleteJobForm from "../complete-job-form";
 
+function formatDate(date: Date) {
+    return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+    }).format(date);
+}
+
+function formatStatus(status: string) {
+    return status
+        .replaceAll("_", " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function formatPriority(priority: string) {
+    return priority.charAt(0) + priority.slice(1).toLowerCase();
+}
+
+function formatActivityAction(action: string) {
+    return action
+        .replaceAll("_", " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export default async function WorkOrderDetailsPage(
     { params }: { params: Promise<{ id: string }> }
 ){
@@ -53,17 +81,22 @@ export default async function WorkOrderDetailsPage(
             orderBy: { name: "asc" },
         })
         : [];
+
+    const isTerminalStatus = 
+        workOrder.status === "COMPLETED" ||
+        workOrder.status === "CANCELLED";
     
     return (
-        <main className="p-6">
-            <div className="mx-auto max-w-4xl">
-                <div className="flex items-center justify-between">
+        <main className="min-h-screen p-6">
+            <div className="mx-auto max-w-5xl">
+
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 className="text-2xl font-semibold">
+                        <h1 className="text-3xl font-bold">
                             {workOrder.title}
                         </h1>
 
-                        <p className="mt-1 text-sm text-gray-600">
+                        <p className="mt-1 text-sm text-gray-400">
                             Work Order Details
                         </p>
                     </div>
@@ -74,7 +107,7 @@ export default async function WorkOrderDetailsPage(
                                 ? "/my-jobs" 
                                 : "/work-orders"
                         }
-                        className="rounded-md border px-4 py-2 text-sm"
+                        className="w-fit rounded-md border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800"
                     >
                             {user.role === "TECHNICIAN" 
                                 ? "Back to My Jobs" 
@@ -83,19 +116,19 @@ export default async function WorkOrderDetailsPage(
                     </Link>
                 </div>
 
-                <div className="mt-6 grid gap-6 md:grid-cols-2">
-                    <section className="rounded-lg border p-5">
+                <div className="mt-8 grid gap-6 md:grid-cols-2">
+                    <section className="rounded-lg border border-gray-700 p-5">
                         <h2 className="font-semibold">
                             Job Information
                         </h2>
 
-                        <div className="mt-4 space-y-3 text-sm">
+                        <div className="mt-4 space-y-4 text-sm">
                             <div>
                                 <p className="font-medium">
                                     Description
                                 </p>
 
-                                <p className="text-gray-600">
+                                <p className="mt-1 text-gray-400">
                                     {workOrder.description}
                                 </p>
                             </div>
@@ -105,7 +138,7 @@ export default async function WorkOrderDetailsPage(
                                     Customer
                                 </p>
 
-                                <p className="text-gray-600">
+                                <p className="mt-1 text-gray-400">
                                     {workOrder.customer.name}
                                 </p>
                             </div>
@@ -115,8 +148,8 @@ export default async function WorkOrderDetailsPage(
                                     Priority
                                 </p>
 
-                                <p className="text-gray-600">
-                                    {workOrder.priority}
+                                <p className="mt-1 text-gray-400">
+                                    {formatPriority(workOrder.priority)}
                                 </p>
                             </div>
 
@@ -125,8 +158,8 @@ export default async function WorkOrderDetailsPage(
                                     Status
                                 </p>
 
-                                <p className="text-gray-600">
-                                    {workOrder.status}
+                                <p className="mt-1 text-gray-400">
+                                    {formatStatus(workOrder.status)}
                                 </p>
                             </div>
 
@@ -135,8 +168,8 @@ export default async function WorkOrderDetailsPage(
                                     Scheduled Date
                                 </p>
 
-                                <p className="text-gray-600">
-                                    {workOrder.scheduledDate.toLocaleString()}
+                                <p className="mt-1 text-gray-400">
+                                    {formatDate(workOrder.scheduledDate)}
                                 </p>
                             </div>
 
@@ -145,34 +178,70 @@ export default async function WorkOrderDetailsPage(
                                     Technician
                                 </p>
 
-                                <p className="text-gray-600">
+                                <p className="mt-1 text-gray-400">
                                     {workOrder.technician 
                                         ? workOrder.technician.name 
                                         : "Not assigned"}
                                 </p>
                             </div>
+
+                            {workOrder.completionNotes && (
+                                <div>
+                                    <p className="font-medium">
+                                        Completion Notes
+                                    </p>
+
+                                    <p className="mt-1 text-gray-400">
+                                        {workOrder.completionNotes}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </section>
 
                     {user.role === "ADMIN" || user.role === "DISPATCHER" ? (
-                        <section className="rounded-lg border p-5">
-                            <h2 className="font-semibold">
-                                Assign Technician
-                            </h2>
+                        <section className="rounded-lg border border-gray-700 p-5">
+                           {isTerminalStatus ? (
+                                <>
+                                    <h2 className="font-semibold">
+                                        Work Order Status
+                                    </h2>
 
-                            <AssignTechnicianForm
-                                workOrderId={workOrder.id}
-                                currentTechnicianId={workOrder.technicianId}
-                                technicians={technicians}
-                            />
+                                    <div className="mt-4 rounded-md border border-gray-700 p-4">
+                                        <p className="text-sm text-gray-300">
+                                            This work order is{" "}
+                                            <span className="font-medium">
+                                                {formatStatus(workOrder.status)}
+                                            </span>
+                                            .
+                                        </p>
+
+                                        <p className="mt-2 text-sm text-gray-400">
+                                            Technician assignment is no longer available for this work order.
+                                        </p>
+                                    </div>
+                                </>
+                           ): (
+                                <>
+                                    <h2 className="font-semibold">
+                                        Assign Technician
+                                    </h2>
+                                    
+                                    <AssignTechnicianForm
+                                        workOrderId={workOrder.id}
+                                        currentTechnicianId={workOrder.technicianId}
+                                        technicians={technicians}
+                                    />
+                                </>
+                           )}
                         </section>
                     ) : (
-                        <section className="rounded-lg border p-5">
+                        <section className="rounded-lg border border-gray-700 p-5">
                             <h2 className="font-semibold">
                                 Technician
                             </h2>
 
-                            <p className="mt-4 text-sm text-gray-600">
+                            <p className="mt-4 text-sm text-gray-400">
                                 {workOrder.technician 
                                     ? workOrder.technician.name 
                                     : "Not assigned"}
@@ -195,36 +264,50 @@ export default async function WorkOrderDetailsPage(
                                     workOrderId={workOrder.id}
                                 />
                             )}
+
+                            {workOrder.status === "COMPLETED" && (
+                                <div className="mt-4 rounded-md border border-gray-700 p-4">
+                                    <p className="text-sm font-medium">
+                                        Job completed
+                                    </p>
+                                    <p className="mt-1 text-sm text-gray-400">
+                                        This work order has already been completed.
+                                    </p>
+                                </div>
+                            )}
                         </section>
                     )} 
                 </div>
 
-                <section className="mt-6 rounded-lg border p-5">
+                <section className="mt-6 rounded-lg border border-gray-700 p-5">
                     <h2 className="font-semibold">
                         Activity History
                     </h2>
 
                     {workOrder.activities.length === 0 ? (
-                        <p className="mt-4 text-sm text-gray-600">
+                        <p className="mt-4 text-sm text-gray-400">
                             No activities recorded for this work order.
                         </p>
                     ) : (
-                        <div className="mt-4 space-y-4">
+                        <div className="mt-5 space-y-4">
                             {workOrder.activities.map((activity) => (
                                 <div 
                                     key={activity.id} 
-                                    className="border-b pb-3 last:border-0"
+                                    className="border-b border-gray-700 pb-4 last:border-0"
                                 >
                                     <p className="text-sm font-medium">
-                                        {activity.action}
+                                        {formatActivityAction(activity.action)}
                                     </p>
 
-                                    <p className="text-sm text-gray-600">
-                                        {activity.note}
-                                    </p>
+                                   {activity.note && (
+                                        <p className="mt-1 text-sm text-gray-400">
+                                            {activity.note}
+                                        </p>
+                                    )}
 
                                     <p className="mt-1 text-xs text-gray-500">
-                                        By {activity.user.name} on {activity.createdAt.toLocaleString()}
+                                        By {activity.user.name} on{"  "}
+                                        {formatDate(activity.createdAt)}
 
                                     </p>
 

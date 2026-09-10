@@ -151,6 +151,13 @@ export async function assignTechnician(
             };
         }
 
+        // Completed and cancelled work orders cannot be reassigned.
+        if (workOrder.status === "COMPLETED" || workOrder.status === "CANCELLED"){
+            return {
+                error: "Cannot assign a technician to a completed or cancelled work order.",
+            };
+        }
+
         const technician = await prisma.technician.findUnique({
             where: { id: technicianId },
         });

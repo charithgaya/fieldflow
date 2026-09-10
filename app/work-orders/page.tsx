@@ -3,10 +3,32 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
 
 type SearchParams = Promise<{
-    search?: string;
+    status?: string;
     priority?: string;
     technicianId?: string;
 }>;
+
+function formatDate(date: Date) {
+    return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+    }).format(date);
+}
+
+function formatStatus(status: string) {
+    return status
+        .replaceAll("_", " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function formatPriority(priority: string) {
+    return priority.charAt(0) + priority.slice(1).toLowerCase();
+}
+
 
 export default async function WorkOrdersPage({ 
     searchParams
@@ -18,14 +40,16 @@ export default async function WorkOrdersPage({
     // Server-side authorization
     if (user.role !== "ADMIN" && user.role !== "DISPATCHER") {
         return (
-            <div className="p-6">
-                <h1 className="text-2xl font-bold">
-                    Access Denied
-                </h1>
-                <p className="mt-2 text-gray-600">
-                    You do not have permission to view work orders.
-                </p>
-            </div>
+            <main className="min-h-screen p-6">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="text-2xl font-bold">
+                        Access Denied
+                    </h1>
+                    <p className="mt-2 text-gray-400">
+                        You do not have permission to view work orders.
+                    </p>
+                </div>
+            </main>
         );
     }
 
@@ -75,144 +99,175 @@ export default async function WorkOrdersPage({
     });
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-4">
+    <main className="min-h-screen p-6">
+        <div className="mx-auto max-w-6xl">
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                 <div>
-                    <h1 className="text-2xl font-semibold">
+                    <h1 className="text-3xl font-bold">
                         Work Orders
                     </h1>
 
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="mt-1 text-sm text-gray-400">
                         Create, assign & track service jobs.
                     </p>
                 </div>
 
                 <Link
                     href="/work-orders/new"
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium"
+                    className="inline-flex items-center w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
                 >
                     Create Work Order
                 </Link>
             </div>
 
-            <form
-                method="GET"
-                className="mt-6 flex flex-wrap gap-3"
-            >
-                <select
-                    name="status"
-                    defaultValue={status ?? ""}
-                    className="px-3 py-2 border rounded-md text-sm"
-                >
-                    <option value="">All Status</option>
-                    <option value="OPEN">Open</option>
-                    <option value="ASSIGNED">Assigned</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="COMPLETED">Completed</option>
-                    <option value="CANCELLED">Cancelled</option>
-                </select>
+            {/* Filters */}
+            <section className="mt-8">
+                <p className="mb-3 font-medium text-sm text-gray-300">
+                    Filters
+                </p>
 
-                <select
-                    name="priority"
-                    defaultValue={priority ?? ""}
-                    className="px-3 py-2 border rounded-md text-sm"
+                <form
+                    method="GET"
+                    className="flex flex-col gap-3 sm:flex-row sm:flex-wrap"
                 >
-                    <option value="">All Priorities</option>
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="URGENT">Urgent</option>
-                </select>
-
-                <select
-                    name="technicianId"
-                    defaultValue={technicianId ?? ""}
-                    className="px-3 py-2 border rounded-md text-sm"
-                >
-                    <option value="">All Technicians</option>
-                    
-                    {technicians.map((technician) => (
-                        <option 
-                            key={technician.id} 
-                            value={technician.id}
-                        >
-                            {technician.name}
-                        </option>
-                    ))}
+                    <select
+                        name="status"
+                        defaultValue={status ?? ""}
+                        className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                    >
+                        <option value="" className="bg-gray-900">All Status</option>
+                        <option value="OPEN" className="bg-gray-900">Open</option>
+                        <option value="ASSIGNED" className="bg-gray-900">Assigned</option>
+                        <option value="IN_PROGRESS" className="bg-gray-900">In Progress</option>
+                        <option value="COMPLETED" className="bg-gray-900">Completed</option>
+                        <option value="CANCELLED" className="bg-gray-900">Cancelled</option>
                     </select>
 
-                <button
-                    type="submit"
-                    className="px-4 py-2 text-sm border rounded-md font-medium"
-                >
-                    Filter
-                </button>
+                    <select
+                        name="priority"
+                        defaultValue={priority ?? ""}
+                        className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                    >
+                        <option value="" className="bg-gray-900">All Priorities</option>
+                        <option value="LOW" className="bg-gray-900">Low</option>
+                        <option value="MEDIUM" className="bg-gray-900">Medium</option>
+                        <option value="HIGH" className="bg-gray-900">High</option>
+                        <option value="URGENT" className="bg-gray-900">Urgent</option>
+                    </select>
 
-                <Link
-                    href="/work-orders"
-                    className="px-4 py-2 text-sm border rounded-md text-gray-600"
-                >
-                    Clear
-                </Link>
-            </form>
+                    <select
+                        name="technicianId"
+                        defaultValue={technicianId ?? ""}
+                        className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                    >
+                        <option value="" className="bg-gray-900">All Technicians</option>
+                    
+                        {technicians.map((technician) => (
+                            <option 
+                                key={technician.id} 
+                                value={technician.id}
+                                className="bg-gray-900"
+                            >
+                                {technician.name}
+                            </option>
+                        ))}
+                    </select>
 
-            <div className="mt-6">
+                    <div className="flex gap-2">
+                        <button
+                            type="submit"
+                            className="px-4 py-2 text-sm border border-gray-700 rounded-md font-medium text-white hover:bg-gray-800"
+                        >
+                            Apply Filters
+                        </button>
+
+                        <Link
+                            href="/work-orders"
+                            className="px-4 py-2 text-sm border border-gray-700 rounded-md text-gray-400 font-medium hover:bg-gray-800 hover:text-white"
+                        >
+                            Clear
+                        </Link>
+                    </div>    
+                </form>
+            </section>
+
+            {/* Work Orders */}
+            <section className="mt-8">
                 {workOrders.length === 0 ? (
-                    <div className="rounded-lg border p-8 text-center">
-                        <h2 className="text-lg font-medium">
+                    <div className="rounded-lg border border-gray-700 p-10 text-center">
+                        <h2 className="text-lg font-semibold">
                             No work orders found
                         </h2>
 
-                        <p className="mt-2 text-sm text-gray-600">
+                        <p className="mt-2 text-sm text-gray-400">
                             There are no work orders matching the selected filters.
                         </p>
+
+                        <Link
+                            href="/work-orders"
+                            className="mt-5 inline-block text-sm font-medium underline"
+                        >
+                            Clear filters
+                        </Link>
                     </div>
                 ) : (
-                    <div className="overflow-hidden rounded-lg border">
-                        <div className="divide-y">
+                    <div className="overflow-hidden rounded-lg border border-gray-700">
+                        <div className="divide-y divide-gray-700">
                             {workOrders.map((workOrder) => (
                                 <div
                                     key={workOrder.id}
-                                    className="p-5"
+                                    className="p-4 transition hover:bg-gray-900/60 sm:p-5"
                                 >
-                                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                                        <div>
-                                            <h2 className="font-semibold">
+                                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                        <div className="min-w-0">
+                                            <Link 
+                                                href={`/work-orders/${workOrder.id}`} 
+                                                className="text-base font-semibold hover:underline"
+                                            >
                                                 {workOrder.title}
-                                            </h2>
+                                            </Link>
 
-                                            <p className="mt-1 text-sm text-gray-600">
-                                                Customer: {" "}
-                                                {workOrder.customer.name}
-                                            </p>
+                                            <div className="mt-2 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-5 text-sm text-gray-400">
+                                                <span>
+                                                    Customer: {" "}    
+                                                    <span className="text-gray-300">
+                                                        {workOrder.customer.name}
+                                                    </span>
+                                                </span>
 
-                                            <p className="mt-1 text-sm text-gray-600">
-                                                Technician: {" "}
-                                                {workOrder.technician
-                                                    ? workOrder.technician.name
-                                                    : "Not assigned"
-                                                }
-                                            </p>
+                                                <span>
+                                                    Technician: {" "}
+                                                    <span className="text-gray-300">
+                                                        {workOrder.technician
+                                                            ? workOrder.technician.name
+                                                            : "Not assigned"
+                                                        }
+                                                    </span>
+                                                </span>
 
-                                            <p className="mt-1 text-sm text-gray-600">
-                                                Scheduled: {" "}
-                                                {workOrder.scheduledDate.toLocaleString()}
-                                            </p>
+                                                <span>
+                                                    Scheduled: {" "}
+                                                    <span className="text-gray-300">
+                                                        {formatDate(workOrder.scheduledDate)}
+                                                    </span>
+                                                </span>
+                                            </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3">
-                                            <span className="rounded-full border px-3 py-1 text-xs font-medium">
-                                                {workOrder.priority}
+                                        {/* Status, Priority, and actions */}
+                                        <div className="flex flex-wrap items-center gap-2 lg:shrink-0">
+                                            <span className="rounded-full border border-gray-600 px-3 py-1 text-xs font-medium">
+                                                {formatPriority(workOrder.priority)}
                                             </span>
 
-                                            <span className="rounded-full border px-3 py-1 text-xs font-medium">
-                                                {workOrder.status}
+                                            <span className="rounded-full border border-gray-600 px-3 py-1 text-xs font-medium">
+                                                {formatStatus(workOrder.status)}
                                             </span>
 
                                             <Link
                                                 href={`/work-orders/${workOrder.id}`}
-                                                className="text-sm font-medium underline"
-                                            >
+                                                className="ml-1 text-sm font-medium underline hover:no-underline"
+                                                >
                                                 View
                                             </Link>
                                         </div>
@@ -222,7 +277,8 @@ export default async function WorkOrdersPage({
                         </div>
                     </div>
                 )}
-            </div>
+            </section>
         </div>
+    </main>
     );
 }

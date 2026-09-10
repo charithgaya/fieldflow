@@ -15,6 +15,13 @@ type AssignmentState = {
 
 const initialState: AssignmentState = {};
 
+function formatStatus(status: string) {
+    return status
+        .replaceAll("_", " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export default function AssignTechnicianForm({
     workOrderId,
     currentTechnicianId,
@@ -48,7 +55,7 @@ export default function AssignTechnicianForm({
             <div>
                 <label
                     htmlFor="technicianId"
-                    className="block text-sm font-medium"
+                    className="block text-sm font-medium mb-1"
                 >
                     Technician
                 </label>
@@ -57,10 +64,10 @@ export default function AssignTechnicianForm({
                     id="technicianId"
                     name="technicianId"
                     defaultValue={currentTechnicianId ?? ""}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     required
                 >
-                    <option value="" disabled>
+                    <option value="" className="bg-gray-900" disabled>
                         Select technician
                     </option>
 
@@ -68,8 +75,9 @@ export default function AssignTechnicianForm({
                         <option
                             key={technician.id}
                             value={technician.id}
+                            className="bg-gray-900"
                         >
-                            {technician.name} — {technician.status}
+                            {technician.name} — {formatStatus(technician.status)}
                         </option>
                     ))}
                 </select>
@@ -78,7 +86,7 @@ export default function AssignTechnicianForm({
             <button
                 type="submit"
                 disabled={pending}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                className="w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium disabled:opacity-50"
             >
                 {pending
                     ? "Assigning..."

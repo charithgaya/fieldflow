@@ -21,22 +21,22 @@ export default async function NewWorkOrderPage() {
     });
 
     return (
-        <main className="p-6">
-            <div className="mx-auto max-w-2xl">
-                <h1 className="text-2xl font-semibold">
+        <main className="min-h-screen p-6">
+            <div className="mx-auto max-w-3xl">
+                <h1 className="text-3xl font-semibold">
                     Create Work Order
                 </h1>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-sm text-gray-400">
                     Create a new service job for a customer.
                 </p>
 
                 {customers.length === 0 ? (
-                    <div className="mt-6 rounded-lg border p-6">
-                        <h2 className="font-medium">
+                    <div className="mt-8 rounded-lg border border-gray-700 p-10 text-center">
+                        <h2 className="text-lg font-semibold">
                             No customers found
                         </h2>
-                        <p className="mt-2 text-sm text-gray-600">
+                        <p className="mt-2 text-sm text-gray-400">
                             Create a new customer to get started.
                         </p>
                     </div>
