@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import LogoutButton from "../components/logout-button";
 
 
 export default async function AdminDashboard() {
@@ -75,11 +76,7 @@ export default async function AdminDashboard() {
                         </p>
                     </div>
 
-                    <Link href="/login">
-                        <button className="mt-4 rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700">
-                            Logout
-                        </button>
-                    </Link>
+                    <LogoutButton />
                 </div>
 
                 {/* Summary Cards */}

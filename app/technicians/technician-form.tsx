@@ -69,7 +69,7 @@ export default function TechnicianForm({
             {/* User account */}
             <div>
                 <label 
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     User Account
                 </label>
@@ -79,14 +79,14 @@ export default function TechnicianForm({
                     name="userId"
                     required
                     defaultValue={technician?.userId ?? ""}
-                    className="w-full text-gray-500 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 >
-                    <option value="">
+                    <option value="" disabled className="text-gray-900">
                         Select a technician user
                     </option>
 
                     {users.map((user) => (
-                        <option key={user.id} value={user.id}>
+                        <option key={user.id} value={user.id} className="text-gray-900">
                             {user.name} ({user.email})
                         </option>
                     ))}
@@ -103,7 +103,7 @@ export default function TechnicianForm({
             <div>
                 <label
                     htmlFor="name" 
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Name
                 </label>
@@ -115,7 +115,7 @@ export default function TechnicianForm({
                     required
                     defaultValue={technician?.name ?? ""}
                     placeholder="Technician name"
-                    className="w-full text-gray-500 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 />
 
                 {state.fieldErrors?.name?.map((error: string) => (
@@ -129,7 +129,7 @@ export default function TechnicianForm({
             <div>
                 <label
                     htmlFor="email" 
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Email
                 </label>
@@ -141,7 +141,7 @@ export default function TechnicianForm({
                     required
                     defaultValue={technician?.email ?? ""}
                     placeholder="technician@example.com"
-                    className="w-full text-gray-500 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 />
 
                 {state.fieldErrors?.email?.map((error: string) => (
@@ -155,7 +155,7 @@ export default function TechnicianForm({
             <div>
                 <label
                     htmlFor="phone" 
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Phone
                 </label>
@@ -167,7 +167,7 @@ export default function TechnicianForm({
                     required
                     defaultValue={technician?.phone ?? ""}
                     placeholder="Phone Number"
-                    className="w-full text-gray-700 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 />
 
                 {state.fieldErrors?.phone?.map((error: string) => (
@@ -181,7 +181,7 @@ export default function TechnicianForm({
             <div>
                 <label
                     htmlFor="skills" 
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Skills
                 </label>
@@ -193,10 +193,10 @@ export default function TechnicianForm({
                     required
                     defaultValue={technician?.skills ?? ""}
                     placeholder="e.g. HVAC, Electrical, AC repair, etc."
-                    className="w-full text-gray-700 rounded-md border border-gray-300 bg-white py-2 px-4 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 />
 
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-400">
                     Separate multiple skills with a commas.
                 </p>
 
@@ -211,7 +211,7 @@ export default function TechnicianForm({
             <div>
                 <label
                     htmlFor="status" 
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Status
                 </label>
@@ -221,23 +221,23 @@ export default function TechnicianForm({
                     name="status"
                     defaultValue={technician?.status ?? "AVAILABLE"}
                     required
-                    className="w-full text-gray-700 rounded-md border border-gray-300 bg-white py-2 px-4 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 >
-                    <option value="AVAILABLE">Available</option>
-                    <option value="BUSY">Busy</option>
-                    <option value="UNAVAILABLE">Unavailable</option>
+                    <option value="AVAILABLE" className="text-gray-900">Available</option>
+                    <option value="BUSY" className="text-gray-900">Busy</option>
+                    <option value="UNAVAILABLE" className="text-gray-900">Unavailable</option>
                 </select>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
+            <div className="flex items-center justify-end gap-3 pt-5">
                 <Link
                     href={
                         isEdit && technician
                             ? `/technicians/${technician.id}`
                             : "/technicians"
                     }
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="rounded-md text-gray-400 border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white"
                 >
                     Cancel
                 </Link>
@@ -245,7 +245,7 @@ export default function TechnicianForm({
                 <button
                     type="submit"
                     disabled={pending}
-                    className="rounded-md bg-indigo-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium hover:bg-indigo-700 text-white disabled:opacity-50"
                 >
                     {
                         pending

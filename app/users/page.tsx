@@ -34,7 +34,7 @@ export default async function UsersPage() {
                             Users
                         </h1>
 
-                        <p className="mt-2 text-gray-600">
+                        <p className="mt-2 text-gray-400">
                             Manage user accounts and their roles in the system.
                         </p>
                     </div>
@@ -47,11 +47,11 @@ export default async function UsersPage() {
                     </Link>
                 </div>
 
-                <div className="rounded-lg border overflow-hidden"> 
-                    <div className="px-6 py-4 border-b">
-                        <h2 className="font-semibold">
+                <div className="rounded-lg border border-gray-700 overflow-hidden"> 
+                    <div className="px-6 py-4 border-b border-gray-700">
+                        <p className="text-sm text-gray-400">
                             {users.length} user{users.length !== 1 ? "s" : ""} found
-                        </h2>
+                        </p>
                     </div>
 
                     {users.length === 0 ? (
@@ -63,23 +63,23 @@ export default async function UsersPage() {
                             <table className="w-full">
                                 <thead className="border-b">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-sm font-medium">
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-400">
                                             Name
                                         </th>
 
-                                        <th className="px-6 py-3 text-left text-sm font-medium">
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-400">
                                             Email
                                         </th>
 
-                                        <th className="px-6 py-3 text-left text-sm font-medium">
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-400">
                                             Role
                                         </th>
 
-                                        <th className="px-6 py-3 text-left text-sm font-medium">
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-400">
                                             Email Verified
                                         </th>
 
-                                        <th className="px-6 py-3 text-left text-sm font-medium">
+                                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-400">
                                             Created At
                                         </th>
                                     </tr>
@@ -103,7 +103,7 @@ export default async function UsersPage() {
                                                 {user.role}
                                             </td>
 
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-6 py-4 text-left">
                                                 {user.emailVerified ? "Yes" : "No"}
                                             </td>
 

@@ -58,7 +58,7 @@ export default function CustomerForm({
             <div>
                 <label
                     htmlFor="name"
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Name
                 </label>
@@ -69,7 +69,7 @@ export default function CustomerForm({
                     type="text"
                     required
                     defaultValue={customer?.name ?? ""}
-                    className="w-full text-gray-900 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm outline-none focus:border-black focus:ring-1 focus:ring-black"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="Enter customer name"
                 />
 
@@ -87,7 +87,7 @@ export default function CustomerForm({
             <div>
                 <label
                     htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Email
                 </label>
@@ -98,7 +98,7 @@ export default function CustomerForm({
                     type="email"
                     required
                     defaultValue={customer?.email ?? ""}
-                    className="w-full text-gray-900 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm outline-none focus:border-black focus:ring-1 focus:ring-black"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="customer@example.com"
                 />
 
@@ -116,7 +116,7 @@ export default function CustomerForm({
             <div>
                 <label
                     htmlFor="phone"
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Phone
                 </label>
@@ -127,7 +127,7 @@ export default function CustomerForm({
                     type="tel"
                     required
                     defaultValue={customer?.phone ?? ""}
-                    className="w-full text-gray-900 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm outline-none focus:border-black focus:ring-1 focus:ring-black"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="Enter phone number"
                 />
 
@@ -145,7 +145,7 @@ export default function CustomerForm({
             <div>
                 <label
                     htmlFor="address"
-                    className="mb-2 block text-sm font-medium text-gray-900"
+                    className="mb-2 block text-sm font-medium text-gray-400"
                 >
                     Address
                 </label>
@@ -156,7 +156,7 @@ export default function CustomerForm({
                     required
                     rows={4}
                     defaultValue={customer?.address ?? ""}
-                    className="w-full text-gray-900 resize-none rounded-md border border-gray-300 bg-white px-4 py-2 text-sm outline-none focus:border-black focus:ring-1 focus:ring-black"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white resize-none outline-none focus:border-indigo-500"
                     placeholder="Enter customer address"
                 />
 
@@ -171,14 +171,14 @@ export default function CustomerForm({
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
+            <div className="flex items-center justify-end gap-3 pt-5">
                 <Link
                     href={
                         isEdit && customer
                             ? `/customers/${customer?.id}`
                             : "/customers"
                     }
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="rounded-md text-gray-400 border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white"
                 >
                     Cancel
                 </Link>
@@ -186,7 +186,7 @@ export default function CustomerForm({
                 <button
                     type="submit"
                     disabled={pending}
-                    className="rounded-md bg-black px-5 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium hover:bg-indigo-700 text-white disabled:opacity-50"
                 >
                     {
                         pending 

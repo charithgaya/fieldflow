@@ -167,7 +167,14 @@ export default function WorkOrderForm({
                 )}
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex items-center justify-end gap-3">
+                <Link
+                    href="/work-orders"
+                    className="rounded-md text-gray-400 border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white"
+                >
+                    Cancel
+                </Link>
+
                 <button
                     type="submit"
                     disabled={pending}
@@ -177,13 +184,6 @@ export default function WorkOrderForm({
                         ? "Creating..."
                         : "Create Work Order"}
                 </button>
-
-                <Link
-                    href="/work-orders"
-                    className="rounded-md text-gray-400 border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white"
-                >
-                    Cancel
-                </Link>
             </div>
         </form>
     );
