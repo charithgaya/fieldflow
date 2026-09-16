@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth-utils";
 import StartWorkButton from "../start-work-button";
 import ProgressNoteForm from "../progress-note-form";
 import CompleteJobForm from "../complete-job-form";
+import StatusBadge from "@/app/components/status-badge";
 
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
@@ -158,9 +159,7 @@ export default async function WorkOrderDetailsPage(
                                     Status
                                 </p>
 
-                                <p className="mt-1 text-gray-400">
-                                    {formatStatus(workOrder.status)}
-                                </p>
+                                <StatusBadge status={workOrder.status} />
                             </div>
 
                             <div>

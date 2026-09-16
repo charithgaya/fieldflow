@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
+import StatusBadge from "../components/status-badge";
+import PageHeader from "../components/page-header";
 
 type SearchParams = Promise<{
     status?: string;
@@ -16,13 +18,6 @@ function formatDate(date: Date) {
         hour: "numeric",
         minute: "2-digit",
     }).format(date);
-}
-
-function formatStatus(status: string) {
-    return status
-        .replaceAll("_", " ")
-        .toLowerCase()
-        .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function formatPriority(priority: string) {
@@ -100,26 +95,19 @@ export default async function WorkOrdersPage({
 
     return (
     <main className="min-h-screen p-6">
-        <div className="mx-auto max-w-6xl">
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
-                <div>
-                    <h1 className="text-3xl font-bold">
-                        Work Orders
-                    </h1>
-
-                    <p className="mt-1 text-sm text-gray-400">
-                        Create, assign & track service jobs.
-                    </p>
-                </div>
-
-                <Link
-                    href="/work-orders/new"
-                    className="inline-flex items-center w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
-                >
-                    Create Work Order
-                </Link>
-            </div>
-
+        <div className="mx-auto max-w-7xl">
+            <PageHeader
+                title="Work Orders"
+                description="Create, assign & track service jobs."
+                action={
+                    <Link
+                        href="/work-orders/new"
+                        className="inline-flex items-center w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
+                    >
+                        Create Work Order
+                    </Link>
+                }
+            />
             {/* Filters */}
             <section className="mt-8">
                 <p className="mb-3 font-medium text-sm text-gray-300">
@@ -259,10 +247,8 @@ export default async function WorkOrdersPage({
                                             <span className="rounded-full border border-gray-600 px-3 py-1 text-xs font-medium">
                                                 {formatPriority(workOrder.priority)}
                                             </span>
-
-                                            <span className="rounded-full border border-gray-600 px-3 py-1 text-xs font-medium">
-                                                {formatStatus(workOrder.status)}
-                                            </span>
+                                            
+                                            <StatusBadge status={workOrder.status} />
 
                                             <Link
                                                 href={`/work-orders/${workOrder.id}`}
