@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
+import { canStartWorkOrder } from "@/lib/work-order-rules"; 
 
 const workOrderSchema = z.object({
     title: z.string().trim().min(1, "Title is required"),
@@ -269,17 +270,29 @@ export async function startWork(
             };
         }
 
-        // Server-side ownership protection
-        if(workOrder.technicianId !== technician.id){
-            return {
-                error: "You do not have permission to start this work order.",
-            };
-        }
+        // // Server-side ownership protection
+        // if(workOrder.technicianId !== technician.id){
+        //     return {
+        //         error: "You do not have permission to start this work order.",
+        //     };
+        // }
     
-        // Only an assigned job can be started
-        if(workOrder.status !== "ASSIGNED"){
+        // // Only an assigned job can be started
+        // if(workOrder.status !== "ASSIGNED"){
+        //     return {
+        //         error: "Only an assigned work order can be started.",
+        //     };
+        // }
+
+        const startCheck = canStartWorkOrder(
+            workOrder.status,
+            workOrder.technicianId,
+            technician.id
+        );
+
+        if(!startCheck.allowed){
             return {
-                error: "Only an assigned work order can be started.",
+                error: startCheck.error,
             };
         }
 
