@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
+import { FiPlus } from "react-icons/fi";
+import BackLink from "@/app/components/back-link";
 
 type CustomerPageProps = {
     searchParams: Promise<{
@@ -52,12 +54,20 @@ export default async function CustomersPage({
                         </p>
                     </div>
 
-                    <Link 
-                        href="/customers/new"
-                        className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-                    >
-                        + New Customer
-                    </Link>
+                    <div className="flex gap-3">
+                        {user.role === "ADMIN" ? (
+                            <BackLink href="/admin" label="Admin" />
+                        ) : (user.role === "DISPATCHER" ?(
+                            <BackLink href="/dispatcher" label="Dispatcher" />
+                        ) : null)}
+
+                        <Link 
+                            href="/customers/new"
+                            className="w-fit rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                        >
+                            <FiPlus className="inline-block" /> New Customer
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Search */}

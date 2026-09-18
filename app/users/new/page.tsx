@@ -11,7 +11,7 @@ export default async function NewUserPage() {
 
     return (
         <main className="min-h-screen p-8">
-            <div className="mx-auto max-w-2xl">
+            <div className="mx-auto max-w-3xl">
                 <div className="mb-8">
                     <p className="text-sm text-gray-300">
                         Users / New
@@ -26,7 +26,7 @@ export default async function NewUserPage() {
                     </p>
                 </div>
 
-                <div className="rounded-lg border border-gray-700 p-6 shadow-sm">
+                <div className="mt-6">
                     <UserForm />
                 </div>
             </div>

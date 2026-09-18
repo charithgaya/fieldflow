@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
+import BackLink from "@/app/components/back-link";
 
 type TechnicianDetailsPageProps = {
     params: Promise<{
@@ -60,12 +61,7 @@ export default async function TechnicianDetailsPage({
                     </div>
 
                     <div className="flex gap-3">
-                        <Link
-                            href="/technicians"
-                            className="px-4 py-2 text-sm border border-gray-700 rounded-md font-medium text-white hover:bg-gray-800"
-                        >
-                            Back
-                        </Link>
+                        <BackLink href="/technicians" label="Technicians" />
 
                         <Link
                             href={`/technicians/${technician.id}/edit`}

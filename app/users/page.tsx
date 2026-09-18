@@ -2,6 +2,8 @@ import { requireUser } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import BackLink from "@/app/components/back-link";
+import { FiPlus } from "react-icons/fi";
 
 
 export default async function UsersPage() {
@@ -26,9 +28,9 @@ export default async function UsersPage() {
     });
 
     return (
-        <main className="min-h-screen p-8">
-            <div className="mx-auto max-w-6xl">
-                <div className="mb-8 flex items-start justify-between">
+        <main className="min-h-screen p-6">
+            <div className="mx-auto max-w-7xl">
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-3xl font-bold">
                             Users
@@ -39,12 +41,16 @@ export default async function UsersPage() {
                         </p>
                     </div>
 
-                    <Link 
-                        href="/users/new" 
-                        className="rounded-md bg-indigo-600 px-5 py-2 text-white hover:bg-indigo-800"
-                    >
-                        Add User
-                    </Link>
+                    <div className="flex gap-3">
+                        <BackLink href="/admin" label="Admin" />
+
+                        <Link 
+                            href="/users/new" 
+                            className="rounded-md w-fit bg-indigo-600 px-5 py-2 text-white hover:bg-indigo-800"
+                        >
+                            <FiPlus className="inline-block" />Add User
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="rounded-lg border border-gray-700 overflow-hidden"> 

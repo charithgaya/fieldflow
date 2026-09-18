@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
 import PageHeader from "../components/page-header";
 import StatusBadge from "../components/status-badge";
+import BackLink from "@/app/components/back-link";
 
 export default async function MyJobsPage() {
     const user = await requireUser();
@@ -67,12 +68,7 @@ export default async function MyJobsPage() {
                         description="Work orders assigned to you"
                     />
 
-                    <Link
-                        href="/dashboard"
-                        className="w-fit rounded-md border border-gray-700 px-4 py-2 text-sm font-medium text-gray-200 transition hover:bg-gray-800"
-                    >
-                        Back to Dashboard
-                    </Link>
+                    <BackLink href="/technician" label="Dashboard" />
                 </div>
 
                 {workOrders.length === 0 ? (

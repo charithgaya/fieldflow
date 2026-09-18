@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createUser } from "./action";
+import Link from "next/link";
 
 export default function UserForm() {
     const [error, setError] = useState("");
@@ -25,7 +26,7 @@ export default function UserForm() {
     }
 
     return (
-        <form action={handleSubmit} className="space-y-5">
+        <form action={handleSubmit} className="space-y-6 border border-gray-700 p-6 rounded-md">
             {error && (
                 <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
                     {error}
@@ -45,7 +46,7 @@ export default function UserForm() {
                     name="name"
                     type="text"
                     required
-                    className="w-full rounded-md border px-3 py-2"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="e.g. John Silva"
                 />
             </div>
@@ -63,7 +64,7 @@ export default function UserForm() {
                     name="email"
                     type="email"
                     required
-                    className="w-full rounded-md border px-3 py-2"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="e.g. john@fieldflow.test"
                 />
             </div>
@@ -82,7 +83,7 @@ export default function UserForm() {
                     type="password"
                     required
                     minLength={8}
-                    className="w-full rounded-md border px-3 py-2"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                     placeholder="Minimum 8 characters"
                 />
             </div>
@@ -99,28 +100,28 @@ export default function UserForm() {
                     id="role"
                     name="role"
                     defaultValue="TECHNICIAN"
-                    className="w-full rounded-md border px-3 py-2"
+                    className="w-full px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
                 >
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="DISPATCHER">DISPATCHER</option>
-                    <option value="TECHNICIAN">TECHNICIAN</option>
+                    <option value="ADMIN" className="bg-gray-900">ADMIN</option>
+                    <option value="DISPATCHER" className="bg-gray-900">DISPATCHER</option>
+                    <option value="TECHNICIAN" className="bg-gray-900">TECHNICIAN</option>
                 </select>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex items-center justify-end gap-3">
+                <Link
+                    href="/users"
+                    className="rounded-md text-gray-400 border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800 hover:text-white"
+                >
+                    Cancel
+                </Link>
+
                 <button
                     type="submit"
-                    className="rounded-md bg-indigo-600 px-5 py-2 text-white hover:bg-indigo-800"
+                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium hover:bg-indigo-700 text-white disabled:opacity-50"
                 >
                     Create User
                 </button>
-
-                <a
-                    href="/users"
-                    className="rounded-md bg-gray-200 px-5 py-2 text-gray-800 hover:bg-gray-300"
-                >
-                    Cancel
-                </a>
             </div>
         </form>
     );

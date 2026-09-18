@@ -1,8 +1,8 @@
-import React from 'react';
 import Link from "next/link";
 import { notFound, redirect } from 'next/navigation';
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
+import BackLink from "@/app/components/back-link";
 
 type CustomerDetailsPageProps = {
     params: Promise<{ 
@@ -54,12 +54,7 @@ export default async function CustomerDetailsPage({
                     </div>
 
                     <div className='flex gap-3'>
-                        <Link 
-                            href="/customers"
-                            className='rounded-md bg-transparent px-4 py-2 text-sm font-medium border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white'
-                        >
-                            Back
-                        </Link>
+                        <BackLink href="/customers" label="Customers" />
 
                         <Link 
                             href={`/customers/${customer.id}/edit`}

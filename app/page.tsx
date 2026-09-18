@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LiaSignInAltSolid } from "react-icons/lia";
 
 export default function HomePage() {
   return (
@@ -15,7 +16,7 @@ export default function HomePage() {
             href="/login"
             className="rounded-md text-sm font-medium border border-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-800"
           > 
-            Sign In
+            <LiaSignInAltSolid className="inline-block text-lg" /> Sign In
           </Link>
         </header>
         

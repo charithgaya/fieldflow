@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
 import StatusBadge from "../components/status-badge";
 import PageHeader from "../components/page-header";
+import { MdFilterAlt } from "react-icons/md";
+import BackLink from "../components/back-link";
 
 type SearchParams = Promise<{
     status?: string;
@@ -96,18 +98,28 @@ export default async function WorkOrdersPage({
     return (
     <main className="min-h-screen p-6">
         <div className="mx-auto max-w-7xl">
-            <PageHeader
-                title="Work Orders"
-                description="Create, assign & track service jobs."
-                action={
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <PageHeader
+                    title="Work Orders"
+                    description="Create, assign & track service jobs."
+                />
+
+                <div className="flex gap-3">
+                    {user.role === "ADMIN" ? (
+                        <BackLink href="/admin" label="Admin" />
+                    ) : (user.role === "DISPATCHER" ? (
+                        <BackLink href="/dispatcher" label="Dispatcher" />
+                    ) : null)}
+
                     <Link
                         href="/work-orders/new"
-                        className="inline-flex items-center w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
+                        className="w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
                     >
                         Create Work Order
-                    </Link>
-                }
-            />
+                    </Link>        
+                </div>
+            </div>
+
             {/* Filters */}
             <section className="mt-8">
                 <p className="mb-3 font-medium text-sm text-gray-300">
@@ -166,7 +178,7 @@ export default async function WorkOrdersPage({
                             type="submit"
                             className="px-4 py-2 text-sm border border-gray-700 rounded-md font-medium text-white hover:bg-gray-800"
                         >
-                            Apply Filters
+                           <MdFilterAlt className="inline-block text-lg" /> Apply Filters
                         </button>
 
                         <Link

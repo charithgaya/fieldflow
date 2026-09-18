@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
+import { FiPlus } from "react-icons/fi";
+import BackLink from "@/app/components/back-link";
+import { MdFilterAlt } from "react-icons/md";
 
 type TechnicianPageProps = {
     searchParams: Promise<{
@@ -58,7 +61,7 @@ export default async function TechnicianPage({ searchParams }: TechnicianPagePro
 
     return (
         <main className="min-h-screen p-6">
-            <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-7xl">
                 {/* Header */}
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
@@ -71,12 +74,20 @@ export default async function TechnicianPage({ searchParams }: TechnicianPagePro
                     </p>
                     </div>
 
-                    <Link
-                    href="/technicians/new"
-                    className="w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
-                    >
-                    Add Technician
-                </Link>
+                    <div className="flex gap-3">
+                        {user.role === "ADMIN" ? (
+                            <BackLink href="/admin" label="Admin" />
+                        ) : (user.role === "DISPATCHER" ? (
+                            <BackLink href="/dispatcher" label="Dispatcher" />
+                        ) : null)}
+
+                        <Link
+                            href="/technicians/new"
+                            className="w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
+                        >
+                            <FiPlus className="inline-block" /> Add Technician
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Filters */}
@@ -151,7 +162,7 @@ export default async function TechnicianPage({ searchParams }: TechnicianPagePro
                             type="submit"
                             className="px-4 py-2 text-sm border border-gray-700 rounded-md font-medium text-white hover:bg-gray-800"
                         >
-                            Apply Filters
+                           <MdFilterAlt className="inline-block text-lg" /> Apply Filters
                         </button>
 
                         <Link

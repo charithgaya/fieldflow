@@ -7,6 +7,7 @@ import StartWorkButton from "../start-work-button";
 import ProgressNoteForm from "../progress-note-form";
 import CompleteJobForm from "../complete-job-form";
 import StatusBadge from "@/app/components/status-badge";
+import BackLink from "@/app/components/back-link";
 
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
@@ -102,19 +103,19 @@ export default async function WorkOrderDetailsPage(
                         </p>
                     </div>
 
-                    <Link
+                    <BackLink 
                         href={
                             user.role === "TECHNICIAN" 
                                 ? "/my-jobs" 
                                 : "/work-orders"
-                        }
-                        className="w-fit rounded-md border border-gray-700 px-4 py-2 text-sm hover:bg-gray-800"
-                    >
-                            {user.role === "TECHNICIAN" 
-                                ? "Back to My Jobs" 
-                                : "Back to Work Orders"
+                        } 
+                        label={
+                            user.role === "TECHNICIAN" 
+                                ? "My Jobs" 
+                                : "Work Orders"
                             }
-                    </Link>
+                    />
+                    
                 </div>
 
                 <div className="mt-8 grid gap-6 md:grid-cols-2">
