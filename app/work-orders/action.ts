@@ -175,8 +175,8 @@ export async function assignTechnician(
             };
         }
 
-        const updatedWorkOrder = await prisma.$transaction(async (tx) => {
-            const updatedWorkOrder = await tx.workOrder.update({
+        await prisma.$transaction(async (tx) => {
+            await tx.workOrder.update({
                 where: { id: workOrderId },
                 data: {
                     technicianId,
@@ -184,31 +184,21 @@ export async function assignTechnician(
                 },
             });
 
-            console.log("BEFORE TECHNICIAN UPDATE:", technicianId);
-
-        const updatedTechnician = await tx.technician.update({
+            await tx.technician.update({
                 where: { id: technicianId },
                 data: {
                     status: "BUSY",
                 },
             });
 
-            console.log(
-        "AFTER TECHNICIAN UPDATE:",
-        updatedTechnician.id,
-        updatedTechnician.status
-    );
-
             await tx.activity.create({
                 data: {
-                    workOrderId: updatedWorkOrder.id,
+                    workOrderId,
                     userId: user.id,
                     action: "ASSIGNED",
                     note: "Work order assigned to technician",
                 },
             });
-
-            return updatedWorkOrder;
         });
         
     } catch (error: unknown) {

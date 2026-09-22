@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import AssignTechnicianForm from "../assign-technician-form";
 import { requireUser } from "@/lib/auth-utils";
