@@ -104,7 +104,7 @@ export default async function WorkOrdersPage({
                     description="Create, assign & track service jobs."
                 />
 
-                <div className="flex gap-3">
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                     {user.role === "ADMIN" ? (
                         <BackLink href="/admin" label="Admin" />
                     ) : (user.role === "DISPATCHER" ? (
@@ -113,7 +113,7 @@ export default async function WorkOrdersPage({
 
                     <Link
                         href="/work-orders/new"
-                        className="w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
+                        className="inline-flex w-full items-center min-h-10 justify-center px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition font-medium sm:w-fit"
                     >
                         Create Work Order
                     </Link>        

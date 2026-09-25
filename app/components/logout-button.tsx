@@ -16,7 +16,7 @@ export default function LogoutButton() {
     return (
         <button
             onClick={handleLogout}
-            className="mt-4 rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
         >
            <IoMdLogOut className="inline-block text-lg" /> Logout
         </button>

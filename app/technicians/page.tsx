@@ -74,7 +74,7 @@ export default async function TechnicianPage({ searchParams }: TechnicianPagePro
                     </p>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                         {user.role === "ADMIN" ? (
                             <BackLink href="/admin" label="Admin" />
                         ) : (user.role === "DISPATCHER" ? (
@@ -83,9 +83,9 @@ export default async function TechnicianPage({ searchParams }: TechnicianPagePro
 
                         <Link
                             href="/technicians/new"
-                            className="w-fit px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
+                            className="inline-flex min-h-10 items-center justify-center w-full px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium transition sm:w-fit"
                         >
-                            <FiPlus className="inline-block" /> Add Technician
+                            <FiPlus className="inline-block mr-1 text-lg" /> Add Technician
                         </Link>
                     </div>
                 </div>

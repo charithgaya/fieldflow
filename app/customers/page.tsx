@@ -54,7 +54,7 @@ export default async function CustomersPage({
                         </p>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                         {user.role === "ADMIN" ? (
                             <BackLink href="/admin" label="Admin" />
                         ) : (user.role === "DISPATCHER" ?(
@@ -63,9 +63,9 @@ export default async function CustomersPage({
 
                         <Link 
                             href="/customers/new"
-                            className="w-fit rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                            className="inline-flex items-center justify-center min-h-10 w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition sm:w-fit"
                         >
-                            <FiPlus className="inline-block" /> New Customer
+                            <FiPlus className="inline-block mr-1 text-lg" /> New Customer
                         </Link>
                     </div>
                 </div>

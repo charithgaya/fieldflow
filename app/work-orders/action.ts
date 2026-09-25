@@ -110,6 +110,122 @@ export async function createWorkOrder(
     redirect("/work-orders");
 }
 
+export async function updateWorkOrder(
+    _previousState: WorkOrderFormState,
+    formData: FormData
+): Promise<WorkOrderFormState> {
+
+    const user = await requireUser();
+
+    // Server-side authorization
+    if (user.role !== "ADMIN" && user.role !== "DISPATCHER") {
+        return {
+            error: "You do not have permission to edit a work order.",
+        };
+    }
+
+    const workOrderId = formData.get("workOrderId");
+
+    if (typeof workOrderId !== "string" || !workOrderId) {
+        return {
+            error: "Invalid work order ID.",
+        };
+    }
+
+    const result = workOrderSchema.safeParse({
+        title: formData.get("title") as string,
+        description: formData.get("description") as string,
+        customerId: formData.get("customerId") as string,
+        scheduledDate: formData.get("scheduledDate") as string,
+        priority: formData.get("priority") as string,
+    });
+
+    if (!result.success) {
+        return {
+            error: "Please correct the errors below",
+            fieldErrors: result.error.flatten().fieldErrors,
+        };
+    }
+
+    const {
+        title,
+        description,
+        customerId,
+        scheduledDate,
+        priority,
+    } = result.data;
+
+    const workOrder = await prisma.workOrder.findUnique({
+        where: {
+            id: workOrderId,
+        },
+    });
+
+    if (!workOrder) {
+        return {
+            error: "Work order not found.",
+        };
+    }
+
+    if (
+        workOrder.status !== "OPEN" &&
+        workOrder.status !== "ASSIGNED"
+    ) {
+        return {
+            error: "This work order can no longer be edited.",
+        };
+    }
+
+    const customer = await prisma.customer.findUnique({
+        where: {
+            id: customerId,
+        },
+    });
+
+    if (!customer) {
+        return {
+            error: "Selected customer was not found.",
+            fieldErrors: {
+                customerId: ["Please select a valid customer."],
+            },
+        };
+    }
+
+    const scheduledDateValue = new Date(scheduledDate);
+
+    if (Number.isNaN(scheduledDateValue.getTime())) {
+        return {
+            error: "Invalid scheduled date.",
+            fieldErrors: {
+                scheduledDate: ["Please enter a valid scheduled date."],
+            },
+        };
+    }
+
+    try {
+        await prisma.workOrder.update({
+            where: {
+                id: workOrderId,
+            },
+            data: {
+                title,
+                description,
+                customerId,
+                scheduledDate: scheduledDateValue,
+                priority,
+            },
+        });
+    } catch (error: unknown) {
+        console.error("Error updating work order:", error);
+
+        return {
+            error: "An error occurred while updating the work order. Please try again.",
+        };
+    }
+
+    redirect(`/work-orders/${workOrderId}`);
+}
+
 export type AssignTechnicianFormState = {
     error?: string;
 };
@@ -210,6 +326,80 @@ export async function assignTechnician(
     }
 
     redirect(`/work-orders/${workOrderId}`);    
+}
+
+export type DeleteWorkOrderFormState = {
+    error?: string;
+};
+
+export async function deleteWorkOrder(
+    _previousState: DeleteWorkOrderFormState,
+    formData: FormData
+): Promise<DeleteWorkOrderFormState> {
+    const user = await requireUser();
+
+    // Only Admin and Dispatcher can delete work orders
+    if (user.role !== "ADMIN" && user.role !== "DISPATCHER") {
+        return {
+            error: "You do not have permission to delete a work order.",
+        };
+    }
+
+    const workOrderId = formData.get("workOrderId");
+
+    if (typeof workOrderId !== "string" || !workOrderId) {
+        return {
+            error: "Invalid work order ID.",
+        };
+    }
+
+    try {
+        const workOrder = await prisma.workOrder.findUnique({
+            where: {
+                id: workOrderId,
+            },
+        });
+
+        if (!workOrder) {
+            return {
+                error: "Work order not found.",
+            };
+        }
+
+        // Only OPEN or CANCELLED work orders can be deleted.
+        if (
+            workOrder.status !== "OPEN" &&
+            workOrder.status !== "CANCELLED"
+        ) {
+            return {
+                error: "Only open or cancelled work orders can be deleted.",
+            };
+        }
+
+        await prisma.$transaction(async (tx) => {
+            // Remove activity history first because activities
+            // belong to this work order.
+            await tx.activity.deleteMany({
+                where: {
+                    workOrderId,
+                },
+            });
+
+            await tx.workOrder.delete({
+                where: {
+                    id: workOrderId,
+                },
+            });
+        });
+    } catch (error: unknown) {
+        console.error("Error deleting work order:", error);
+
+        return {
+            error: "An error occurred while deleting the work order. Please try again.",
+        };
+    }
+
+    redirect("/work-orders");
 }
 
 export type StartWorkFormState = {

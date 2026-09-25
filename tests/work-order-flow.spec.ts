@@ -105,8 +105,6 @@ test("dispatcher can create and assign a work order", async ({ page }) => {
 
     await page.getByRole("button", { name: "Assign Technician" }).click();
 
-    await page.waitForTimeout(1000);
-
     // --------------------------------------------------
     // 6. Verify assignment
     // --------------------------------------------------

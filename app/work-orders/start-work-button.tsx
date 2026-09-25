@@ -22,7 +22,7 @@ export default function StartWorkButton({ workOrderId }: StartWorkButtonProps) {
             <button
                 type="submit"
                 disabled={isPending}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm w-fit font-medium py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
                 {isPending ? "Starting..." : "Start Work"}
             </button>

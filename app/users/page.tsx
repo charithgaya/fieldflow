@@ -41,14 +41,14 @@ export default async function UsersPage() {
                         </p>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                         <BackLink href="/admin" label="Admin" />
 
                         <Link 
                             href="/users/new" 
-                            className="rounded-md w-fit bg-indigo-600 px-5 py-2 text-white hover:bg-indigo-800"
+                            className="inline-flex w-full items-center min-h-10 justify-center px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition font-medium sm:w-fit"
                         >
-                            <FiPlus className="inline-block" />Add User
+                            <FiPlus className="inline-block mr-1 text-lg" />Add User
                         </Link>
                     </div>
                 </div>

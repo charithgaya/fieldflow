@@ -7,6 +7,9 @@ import ProgressNoteForm from "../progress-note-form";
 import CompleteJobForm from "../complete-job-form";
 import StatusBadge from "@/app/components/status-badge";
 import BackLink from "@/app/components/back-link";
+import Link from "next/link";
+import { FiPlus } from "react-icons/fi";
+import DeleteWorkOrderButton from "@/app/components/delete-work-order-button";
 
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
@@ -91,7 +94,7 @@ export default async function WorkOrderDetailsPage(
         <main className="min-h-screen p-6">
             <div className="mx-auto max-w-5xl">
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                     <div>
                         <h1 className="text-3xl font-bold">
                             {workOrder.title}
@@ -102,20 +105,37 @@ export default async function WorkOrderDetailsPage(
                         </p>
                     </div>
 
-                    <BackLink 
-                        href={
-                            user.role === "TECHNICIAN" 
+                </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-end mt-4">
+                        {(user.role === "ADMIN" || user.role === "DISPATCHER") && (workOrder.status === "OPEN" || workOrder.status === "ASSIGNED") ? (
+                            <Link 
+                                href={`/work-orders/${workOrder.id}/edit`}
+                                className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-indigo-600 hover:bg-indigo-700 transition"
+                            >
+                                <FiPlus className="inline-block mr-1 text-lg" />Edit Work Order
+                            </Link>
+                        ): null}
+
+                        {(user.role === "ADMIN" || user.role === "DISPATCHER") && 
+                            (workOrder.status === "OPEN" || workOrder.status === "CANCELLED") && (
+                                <DeleteWorkOrderButton 
+                                    workOrderId={workOrder.id} 
+                                />
+                        )}
+
+                        <BackLink 
+                            href={
+                                user.role === "TECHNICIAN" 
                                 ? "/my-jobs" 
                                 : "/work-orders"
-                        } 
-                        label={
-                            user.role === "TECHNICIAN" 
+                            } 
+                            label={
+                                user.role === "TECHNICIAN" 
                                 ? "My Jobs" 
                                 : "Work Orders"
                             }
-                    />
-                    
-                </div>
+                        />
+                    </div>
 
                 <div className="mt-8 grid gap-6 md:grid-cols-2">
                     <section className="rounded-lg border border-gray-700 p-5">
