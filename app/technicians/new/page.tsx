@@ -33,11 +33,11 @@ export default async function NewTechnicianPage() {
         <main className="min-h-screen p-6">
             <div className="mx-auto max-w-2xl">
                 <div className="mb-6">
-                    <p className="mb-1 text-sm text-gray-300">
+                    <p className="text-sm text-gray-300">
                         Technicians / New
                     </p>
 
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className="mt-1 text-2xl font-bold text-white">
                         Create Technician
                     </h1>
 

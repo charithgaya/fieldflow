@@ -23,13 +23,21 @@ type EditWorkOrderFormProps = {
 const initialState: WorkOrderFormState = {};
 
 function formatDateTimeLocal(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Colombo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+    }).formatToParts(date);
 
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    const values = Object.fromEntries(
+        parts.map(({ type, value }) => [type, value])
+    );
+
+    return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`;
 }
 
 export default function EditWorkOrderForm({

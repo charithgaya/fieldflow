@@ -8,11 +8,12 @@ import CompleteJobForm from "../complete-job-form";
 import StatusBadge from "@/app/components/status-badge";
 import BackLink from "@/app/components/back-link";
 import Link from "next/link";
-import { FiPlus } from "react-icons/fi";
+import { MdEdit } from "react-icons/md";
 import DeleteWorkOrderButton from "@/app/components/delete-work-order-button";
 
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Colombo",
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -112,7 +113,7 @@ export default async function WorkOrderDetailsPage(
                                 href={`/work-orders/${workOrder.id}/edit`}
                                 className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-indigo-600 hover:bg-indigo-700 transition"
                             >
-                                <FiPlus className="inline-block mr-1 text-lg" />Edit Work Order
+                                <MdEdit className="inline-block mr-1 text-lg" />Edit Work Order
                             </Link>
                         ): null}
 

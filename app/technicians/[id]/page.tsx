@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
 import BackLink from "@/app/components/back-link";
-
+import { FaUserEdit } from "react-icons/fa";
 type TechnicianDetailsPageProps = {
     params: Promise<{
         id: string;
@@ -67,7 +67,7 @@ export default async function TechnicianDetailsPage({
                             href={`/technicians/${technician.id}/edit`}
                             className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 font-medium"
                         >
-                            Edit Technician
+                            <FaUserEdit className="inline-block mr-1 text-lg" />Edit Technician
                         </Link>
                     </div>
                 </div>

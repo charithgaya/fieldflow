@@ -14,7 +14,11 @@ export default async function NewCustomerPage() {
         <main className="min-h-screen p-6">
             <div className="mx-auto max-w-2xl">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-white">
+                    <p className="text-sm text-gray-300">
+                        Customers / New
+                    </p>
+
+                    <h1 className="mt-1 text-2xl font-bold text-white">
                         Create Customer
                     </h1>
 

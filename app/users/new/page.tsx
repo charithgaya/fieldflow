@@ -10,18 +10,18 @@ export default async function NewUserPage() {
     }
 
     return (
-        <main className="min-h-screen p-8">
-            <div className="mx-auto max-w-3xl">
-                <div className="mb-8">
+        <main className="min-h-screen p-6">
+            <div className="mx-auto max-w-2xl">
+                <div className="mb-6">
                     <p className="text-sm text-gray-300">
                         Users / New
                     </p>
 
-                    <h1 className="mt-1 text-3xl font-bold">
+                    <h1 className="mt-1 text-2xl font-bold">
                         Create User
                     </h1>
 
-                    <p className="mt-1 text-gray-400">
+                    <p className="mt-1 text-sm text-gray-400">
                         Create a FieldFlow user account and assign a role.
                     </p>
                 </div>

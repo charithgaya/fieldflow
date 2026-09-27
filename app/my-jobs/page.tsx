@@ -5,8 +5,20 @@ import { requireUser } from "@/lib/auth-utils";
 import PageHeader from "../components/page-header";
 import StatusBadge from "../components/status-badge";
 import BackLink from "@/app/components/back-link";
+import { formatSriLankaDateTime } from "@/lib/date-utils";
+import { MdFilterAlt } from "react-icons/md";
 
-export default async function MyJobsPage() {
+type SearchParams = Promise<{
+    status?: string;
+    priority?: string;
+    sort?: string;
+}>;
+
+export default async function MyJobsPage({
+    searchParams,
+}: {
+    searchParams: SearchParams;
+}) {
     const user = await requireUser();
 
     // Only technicians can access My Jobs
@@ -46,16 +58,38 @@ export default async function MyJobsPage() {
         );
     }
 
+    const params = await searchParams;
+    const status = params.status;
+    const priority = params.priority;
+    const sort = params.sort;
+
+    const sortOrder = sort === "asc" ? "asc" : "desc";
+
     // Get only work orders assigned to this technician.
     const workOrders = await prisma.workOrder.findMany({
         where: {
+            ...(status
+                ?   { 
+                        status: status as  
+                            | "ASSIGNED" 
+                            | "IN_PROGRESS" 
+                            | "COMPLETED" 
+                    } : {}),
+            ...(priority
+                ?   { 
+                        priority: priority as 
+                            | "LOW" 
+                            | "MEDIUM" 
+                            | "HIGH"
+                            | "URGENT"
+                    } : {}),
             technicianId: technician.id,
         },
         include: {
             customer: true,
         },
         orderBy: {
-            scheduledDate: "asc",
+            scheduledDate: sortOrder,
         },
     });
 
@@ -70,6 +104,70 @@ export default async function MyJobsPage() {
 
                     <BackLink href="/technician" label="Dashboard" />
                 </div>
+
+                {/* Filters */}
+                <section className="mt-8">
+                    <p className="mb-3 font-medium text-sm text-gray-300">
+                        Filters
+                    </p>
+
+                    <form
+                        method="GET"
+                        className="flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+                    >
+                        <select
+                            name="status"
+                            defaultValue={status ?? ""}
+                            className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                        >
+                            <option value="" className="bg-gray-900">All Status</option>
+                            <option value="ASSIGNED" className="bg-gray-900">Assigned</option>
+                            <option value="IN_PROGRESS" className="bg-gray-900">In Progress</option>
+                            <option value="COMPLETED" className="bg-gray-900">Completed</option>
+                        </select>
+
+                        <select
+                            name="priority"
+                            defaultValue={priority ?? ""}
+                            className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                        >
+                            <option value="" className="bg-gray-900">All Priorities</option>
+                            <option value="LOW" className="bg-gray-900">Low</option>
+                            <option value="MEDIUM" className="bg-gray-900">Medium</option>
+                            <option value="HIGH" className="bg-gray-900">High</option>
+                            <option value="URGENT" className="bg-gray-900">Urgent</option>
+                        </select>
+
+                        <select
+                            name="sort"
+                            defaultValue={sort ?? "desc"}
+                            className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                        >
+                            <option value="desc" className="bg-gray-900">
+                                Newest First
+                            </option>
+                            <option value="asc" className="bg-gray-900">
+                                Oldest First
+                            </option>
+                        </select>
+
+                        <div className="flex gap-2">
+                            <button
+                                type="submit"
+                                className="px-4 py-2 text-sm border border-gray-700 rounded-md font-medium text-white hover:bg-gray-800"
+                            >
+                                <MdFilterAlt className="inline-block text-lg" /> Apply Filters
+                            </button>
+
+                            <Link
+                                href="/my-jobs"
+                                className="px-4 py-2 text-sm border border-gray-700 rounded-md text-gray-400 font-medium hover:bg-gray-800 hover:text-white"
+                            >
+                                Clear
+                            </Link>
+                        </div>    
+                    </form>
+                </section>
 
                 {workOrders.length === 0 ? (
                     <section className="mt-8 rounded-lg border border-gray-800 p-10 text-center">
@@ -136,7 +234,7 @@ export default async function MyJobsPage() {
                                         </p>
 
                                         <p className="mt-1 text-sm text-gray-300">
-                                            {workOrder.scheduledDate.toLocaleString()}
+                                            {formatSriLankaDateTime(workOrder.scheduledDate)}
                                         </p>
                                     </div>
                                 </div>

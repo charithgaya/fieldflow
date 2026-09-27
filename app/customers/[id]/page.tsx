@@ -3,6 +3,8 @@ import { notFound, redirect } from 'next/navigation';
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
 import BackLink from "@/app/components/back-link";
+import { FaUserEdit } from "react-icons/fa";
+import { formatSriLankaDateTime } from "@/lib/date-utils";
 
 type CustomerDetailsPageProps = {
     params: Promise<{ 
@@ -60,7 +62,7 @@ export default async function CustomerDetailsPage({
                             href={`/customers/${customer.id}/edit`}
                             className='rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700'
                         >
-                            Edit
+                            <FaUserEdit className="inline-block mr-1 text-lg" />Edit Customer
                         </Link>
                     </div> 
                 </div>
@@ -104,7 +106,7 @@ export default async function CustomerDetailsPage({
                                 Created
                             </p>
                             <p className='mt-1 text-sm text-white'>
-                                {customer.createdAt.toLocaleDateString()}
+                                {formatSriLankaDateTime(customer.createdAt)}
                             </p>
                         </div>
 
@@ -121,7 +123,7 @@ export default async function CustomerDetailsPage({
 
                 {/* Related Work Orders */}
                 <section className='rounded-lg border border-gray-700 shadow-sm'>
-                    <div className='border-b border-gray-200 py-4 px-6'>
+                    <div className='border-b border-gray-700 py-4 px-6'>
                         <h2 className='text-lg font-semibold text-gray-300'>
                             Related Work Orders
                         </h2>
@@ -143,44 +145,44 @@ export default async function CustomerDetailsPage({
                         </div>
                     ) :(
                         <div className='overflow-x-auto'>
-                            <table className='w-full'>
-                                <thead className='border-b border-gray-200 bg-gray-50'>
+                            <table className='w-full min-w-175'>
+                                <thead className='border-b border-gray-800 bg-gray-900/50'>
                                     <tr>
-                                        <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500'>
+                                        <th className='px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400'>
                                             Title
                                         </th>
 
-                                        <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500'>
+                                        <th className='px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400'>
                                             Status
                                         </th>
 
-                                        <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500'>
+                                        <th className='px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400'>
                                             Priority
                                         </th>
 
-                                        <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500'>
+                                        <th className='px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400'>
                                             Scheduled
                                         </th>
                                     </tr>
                                 </thead>
 
-                                <tbody className='divide-y divide-gray-200'>
+                                <tbody className='divide-y divide-gray-400'>
                                 {customer.workOrders.map((workOrder) => (
                                     <tr key={workOrder.id}>
-                                        <td className='px-6 py-4 text-sm font-medium text-gray-900'>
+                                        <td className='px-6 py-4 text-sm font-medium'>
                                             {workOrder.title}
                                         </td>
 
-                                        <td className='px-6 py-4 text-sm text-gray-600'>
+                                        <td className='px-6 py-4 text-sm'>
                                             {workOrder.status}
                                         </td>
 
-                                        <td className='px-6 py-4 text-sm text-gray-600'>
+                                        <td className='px-6 py-4 text-sm'>
                                             {workOrder.priority}
                                         </td>
 
-                                        <td className='px-6 py-4 text-sm text-gray-600'>
-                                            {workOrder.scheduledDate.toLocaleDateString()}
+                                        <td className='px-6 py-4 text-sm'>
+                                            {formatSriLankaDateTime(workOrder.scheduledDate)}
                                         </td>
                                     </tr>
                                 ))}

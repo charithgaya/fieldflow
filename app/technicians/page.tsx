@@ -195,31 +195,31 @@ export default async function TechnicianPage({ searchParams }: TechnicianPagePro
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="border-b">
+                            <table className="w-full min-w-175">
+                                <thead className="border-b border-gray-800 bg-gray-900/50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-300">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Name
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-300">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Email
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-300">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Phone
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-300">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Skills
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-300">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Status
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-300">
+                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Action
                                         </th>
                                     </tr>
                                 </thead>
 
-                                <tbody className="divide-y">
+                                <tbody className="divide-y divide-gray-400">
                                     {technicians.map((technician) => (
                                         <tr key={technician.id}>
                                             <td className="px-6 py-4 text-sm font-medium">

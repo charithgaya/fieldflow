@@ -49,7 +49,7 @@ export default async function CustomersPage({
                             Customers
                         </h1>
 
-                        <p className="mt-1 text-sm text-gray-400">
+                        <p className="mt-1 text-sm text-gray-300">
                             Manage customer records & service history.
                         </p>
                     </div>
@@ -100,15 +100,17 @@ export default async function CustomersPage({
                     )}
                 </form>
                 
-                {/* Result count */}
-                <p className="mt-2 mb-2 text-sm text-gray-400">
-                    {customers.length}{" "}
-                    {customers.length === 1 ? "customer" : "customers"} found.
-                    {search ? `matching "${search}"` : ""}
-                </p>
-
                 {/* Results */}
                 <div className="overflow-hidden rounded-lg border border-gray-700 shadow-sm">
+                    <div className="px-6 py-4 border-b border-gray-700">
+                        {/* Result count */}
+                        <p className="text-sm text-gray-400">
+                            {customers.length}{" "}
+                            {customers.length === 1 ? "customer" : "customers"} found.
+                            {search ? `matching "${search}"` : ""}
+                        </p>
+                    </div>
+                    
                     {customers.length === 0 ? (
                         <div className="px-6 py-12 text-center">
                             <h2 className="text-lg font-semibold">
@@ -132,8 +134,8 @@ export default async function CustomersPage({
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[700px]">
-                                <thead className="border-b">
+                            <table className="w-full min-w-175">
+                                <thead className="border-b border-gray-800 bg-gray-900/50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">Name</th>
                                         <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">Email</th>
@@ -143,7 +145,7 @@ export default async function CustomersPage({
                                     </tr>
                                 </thead>
 
-                                <tbody className="divide-y">
+                                <tbody className="divide-y divide-gray-400">
                                     {customers.map((customer) => (
                                         <tr 
                                             key={customer.id} 

@@ -23,7 +23,7 @@ export default async function NewWorkOrderPage() {
     return (
         <main className="min-h-screen p-6">
             <div className="mx-auto max-w-3xl">
-                <h1 className="text-3xl font-semibold">
+                <h1 className="text-2xl font-semibold">
                     Create Work Order
                 </h1>
 

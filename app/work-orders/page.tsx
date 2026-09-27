@@ -10,10 +10,12 @@ type SearchParams = Promise<{
     status?: string;
     priority?: string;
     technicianId?: string;
+    sort?: string;
 }>;
 
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Colombo",
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -55,6 +57,9 @@ export default async function WorkOrdersPage({
     const status = params.status;
     const priority = params.priority;
     const technicianId = params.technicianId;
+    const sort = params.sort;
+
+    const sortOrder = sort === "asc" ? "asc" : "desc";
 
     const workOrders = await prisma.workOrder.findMany({
         where: {
@@ -85,7 +90,7 @@ export default async function WorkOrdersPage({
             technician: true,
         },
         orderBy: {
-            scheduledDate: "asc",
+            scheduledDate: sortOrder,
         }
     });
 
@@ -171,6 +176,20 @@ export default async function WorkOrdersPage({
                                 {technician.name}
                             </option>
                         ))}
+                    </select>
+
+                    <select
+                        name="sort"
+                        defaultValue={sort ?? "asc"}
+                        className="px-3 py-2 border border-gray-700 bg-transparent rounded-md text-sm text-white outline-none focus:border-indigo-500"
+                    >
+                        <option value="" className="bg-gray-900" disabled>Order</option>
+                        <option value="desc" className="bg-gray-900">
+                            Newest First
+                        </option>
+                        <option value="asc" className="bg-gray-900">
+                            Oldest First
+                        </option>
                     </select>
 
                     <div className="flex gap-2">

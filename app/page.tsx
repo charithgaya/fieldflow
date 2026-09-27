@@ -4,6 +4,8 @@ import { getCurrentUser } from "@/lib/auth-utils";
 import LogoutButton from "./components/logout-button";
 import { MdDashboard } from "react-icons/md";
 import FieldFlowLogo from "./components/fieldflow-logo";
+import { IoIosArrowDroprightCircle } from "react-icons/io";
+
 export default async function HomePage() {
   const user = await getCurrentUser();
 
@@ -61,14 +63,14 @@ export default async function HomePage() {
                   href="/dashboard"
                   className="rounded-md bg-indigo-600 px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-indigo-700"
                 >
-                  Go to Dashboard
+                  Go to Dashboard<IoIosArrowDroprightCircle className="inline-block ml-2 text-lg" />
                 </Link>
               ):(
                 <Link
                   href="/login"
                   className="rounded-md bg-indigo-600 px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-indigo-700"
                 >
-                  Sign In to FieldFlow
+                  <LiaSignInAltSolid className="inline-block text-lg" /> Sign In to FieldFlow
                 </Link>
               )}
 
@@ -77,7 +79,7 @@ export default async function HomePage() {
                   href="/dashboard"
                   className="rounded-md px-6 py-3 text-center text-sm font-medium text-gray-200 border border-gray-700 transition hover:bg-gray-800"
                 >
-                  Go to Dashboard
+                  Go to Dashboard<IoIosArrowDroprightCircle className="inline-block ml-2 text-lg" />
                 </Link>
               )}
             </div>

@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import LogoutButton from "../components/logout-button";
 import PageHeader from "../components/page-header";
 import StatusBadge from "../components/status-badge";
-
+import { formatSriLankaDateTime } from "@/lib/date-utils";
 
 export default async function AdminDashboard() {
     const user = await requireUser();
@@ -171,7 +171,7 @@ export default async function AdminDashboard() {
                                                     <StatusBadge status={workOrder.status} />
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    {workOrder.createdAt.toLocaleDateString()}
+                                                    {formatSriLankaDateTime(workOrder.createdAt)}
                                                 </td>
                                             </tr>
                                         ))}
