@@ -192,9 +192,9 @@ export async function updateWorkOrder(
         };
     }
 
-    const scheduledDateValue = new Date(scheduledDate);
+    const scheduledDateValue = parseSriLankaDateTime(scheduledDate);
 
-    if (Number.isNaN(scheduledDateValue.getTime())) {
+    if (!scheduledDateValue) {
         return {
             error: "Invalid scheduled date.",
             fieldErrors: {
