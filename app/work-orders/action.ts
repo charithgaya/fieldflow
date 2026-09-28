@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-utils";
-import { canStartWorkOrder } from "@/lib/work-order-rules"; 
+import { canStartWorkOrder } from "@/lib/work-order-rules";
+import { parseSriLankaDateTime } from "@/lib/date-utils"; 
 
 const workOrderSchema = z.object({
     title: z.string().trim().min(1, "Title is required"),
@@ -71,14 +72,14 @@ export async function createWorkOrder(
         };
     }
 
-    const scheduleDateValue = new Date(scheduledDate);
+    const scheduleDateValue = parseSriLankaDateTime(scheduledDate);
 
-    if (Number.isNaN(scheduleDateValue.getTime())) {
+   if(!scheduleDateValue){
         return {
             error: "Invalid scheduled date.",
         };
-    }
-
+   }
+   
     try {
         const workOrder = await prisma.workOrder.create({
             data: {
