@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import FieldFlowLogo from "@/app/components/fieldflow-logo";
+import Link from "next/link";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -39,7 +40,9 @@ export default function LoginPage() {
         <main className="flex items-center justify-center min-h-screen p-6">
             <div className="w-full max-w-md rounded-lg border border-gray-800 bg-gray-950 p-6 shadow-md sm:p-8">
                 <div className="mb-8 flex justify-center">
-                    <FieldFlowLogo className="h-auto w-54 sm:w-72" />
+                    <Link href="/" className="block shrink-0">
+                        <FieldFlowLogo className="h-auto w-54 sm:w-72" />
+                    </Link>
                 </div>
 
                 <div className="mb-6 text-center">
