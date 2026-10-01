@@ -73,7 +73,8 @@ export default async function MyJobsPage({
                         status: status as  
                             | "ASSIGNED" 
                             | "IN_PROGRESS" 
-                            | "COMPLETED" 
+                            | "COMPLETED"
+                            | "CANCELLED" 
                     } : {}),
             ...(priority
                 ?   { 
@@ -124,6 +125,7 @@ export default async function MyJobsPage({
                             <option value="ASSIGNED" className="bg-gray-900">Assigned</option>
                             <option value="IN_PROGRESS" className="bg-gray-900">In Progress</option>
                             <option value="COMPLETED" className="bg-gray-900">Completed</option>
+                            <option value="CANCELLED" className="bg-gray-900">Cancelled</option>
                         </select>
 
                         <select

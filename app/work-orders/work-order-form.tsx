@@ -27,7 +27,7 @@ export default function WorkOrderForm({
     return (
         <form action={formAction} className="space-y-6 border border-gray-700 p-6 rounded-md">
             {state.error && (
-                <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+                <div className="text-sm text-red-400">
                     {state.error}
                 </div>
             )}

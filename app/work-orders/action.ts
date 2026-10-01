@@ -276,6 +276,13 @@ export async function assignTechnician(
             };
         }
 
+        // Work orders already assigned to a technician cannot be re-assigned to him/her.
+        if (workOrder.status === "ASSIGNED" && workOrder.technicianId === technicianId) {
+            return {
+                error: "Work order is already assigned to this technician.",
+            };
+        }
+
         const technician = await prisma.technician.findUnique({
             where: { id: technicianId },
         });
@@ -450,20 +457,6 @@ export async function startWork(
                 error: "Work order not found.",
             };
         }
-
-        // // Server-side ownership protection
-        // if(workOrder.technicianId !== technician.id){
-        //     return {
-        //         error: "You do not have permission to start this work order.",
-        //     };
-        // }
-    
-        // // Only an assigned job can be started
-        // if(workOrder.status !== "ASSIGNED"){
-        //     return {
-        //         error: "Only an assigned work order can be started.",
-        //     };
-        // }
 
         const startCheck = canStartWorkOrder(
             workOrder.status,
@@ -703,4 +696,109 @@ export async function completeWorkOrder(
     return {
         success: "Work order completed successfully.",
     };
+}
+
+export type CancelWorkOrderFormState = {
+    error?: string;
+};
+
+export async function cancelWorkOrder(
+    _previousState: CancelWorkOrderFormState,
+    formData: FormData
+): Promise<CancelWorkOrderFormState> {
+    const user = await requireUser();
+
+    // Only Admin and Dispatcher can cancel work orders
+    if (user.role !== "ADMIN" && user.role !== "DISPATCHER") {
+        return {
+            error: "You do not have permission to cancel a work order.",
+        };
+    }
+
+    const workOrderId = formData.get("workOrderId");
+    const cancellationReason = formData.get("cancellationReason");
+
+    if (typeof workOrderId !== "string" || !workOrderId) {
+        return {
+            error: "Invalid work order ID.",
+        };
+    }
+
+    if (typeof cancellationReason !== "string" || !cancellationReason.trim()) {
+        return {
+            error: "Cancellation reason is required.",
+        };
+    }
+
+    if (cancellationReason.trim().length < 5) {
+        return {
+            error: "Cancellation reason must be at least 5 characters long.",
+        };
+    }
+
+    try {
+        const workOrder = await prisma.workOrder.findUnique({
+            where: {
+                id: workOrderId,
+            },
+        });
+
+        if (!workOrder) {
+            return {
+                error: "Work order not found.",
+            };
+        }
+
+        // Completed and already cancelled work orders cannot be cancelled.
+        if (
+            workOrder.status === "COMPLETED" ||
+            workOrder.status === "CANCELLED"
+        ) {
+            return {
+                error: "This work order cannot be cancelled.",
+            };
+        }
+
+        await prisma.$transaction(async (tx) => {
+            // Cancel the work order
+            await tx.workOrder.update({
+                where: {
+                    id: workOrderId,
+                },
+                data: {
+                    status: "CANCELLED",
+                },
+            });
+
+            // Make the assigned technician available again
+            if (workOrder.technicianId) {
+                await tx.technician.update({
+                    where: {
+                        id: workOrder.technicianId,
+                    },
+                    data: {
+                        status: "AVAILABLE",
+                    },
+                });
+            }
+
+            // Record cancellation in activity history
+            await tx.activity.create({
+                data: {
+                    workOrderId,
+                    userId: user.id,
+                    action: "STATUS_CHANGED",
+                    note: `Work order cancelled. Reason: ${cancellationReason.trim()}`,
+                },
+            });
+        });
+    } catch (error: unknown) {
+        console.error("Error cancelling work order:", error);
+
+        return {
+            error: "An error occurred while cancelling the work order. Please try again.",
+        };
+    }
+
+    redirect(`/work-orders/${workOrderId}`);
 }

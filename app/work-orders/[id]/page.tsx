@@ -10,6 +10,7 @@ import BackLink from "@/app/components/back-link";
 import Link from "next/link";
 import { MdEdit } from "react-icons/md";
 import DeleteWorkOrderButton from "@/app/components/delete-work-order-button";
+import CancelWorkOrderButton from "@/app/components/cancel-work-order-button";
 
 function formatDate(date: Date) {
     return new Intl.DateTimeFormat("en-US", {
@@ -108,6 +109,8 @@ export default async function WorkOrderDetailsPage(
 
                 </div>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-end mt-4">
+
+                        {/* Only Admin & Dispatcher can edit work orders that are OPEN or ASSIGNED */ }
                         {(user.role === "ADMIN" || user.role === "DISPATCHER") && (workOrder.status === "OPEN" || workOrder.status === "ASSIGNED") ? (
                             <Link 
                                 href={`/work-orders/${workOrder.id}/edit`}
@@ -117,12 +120,23 @@ export default async function WorkOrderDetailsPage(
                             </Link>
                         ): null}
 
+                        {/* Only Admin & Dispatcher can cancel work orders that are OPEN, ASSIGNED, or IN_PROGRESS */ }
+                        {(user.role === "ADMIN" || user.role === "DISPATCHER") &&
+                            (workOrder.status === "OPEN" || workOrder.status === "ASSIGNED" || workOrder.status === "IN_PROGRESS") && (
+                                <CancelWorkOrderButton
+                                    workOrderId={workOrder.id}
+                                />
+                            )
+                        }
+                        
+                        {/* Only Admin & Dispatcher can delete work orders that are OPEN or CANCELLED */ }
                         {(user.role === "ADMIN" || user.role === "DISPATCHER") && 
                             (workOrder.status === "OPEN" || workOrder.status === "CANCELLED") && (
                                 <DeleteWorkOrderButton 
                                     workOrderId={workOrder.id} 
                                 />
-                        )}
+                            )
+                        }
 
                         <BackLink 
                             href={
